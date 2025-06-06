@@ -44,10 +44,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./chat_frontend/dist:/usr/share/nginx/html:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:rw
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:rw
+      - ./chat_frontend/dist:/usr/share/nginx/html:rw
+      - /etc/letsencrypt:/etc/letsencrypt:rw
     depends_on:
       - backend
     networks:
