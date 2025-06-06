@@ -133,8 +133,8 @@
     .messageBubble {
         padding: 7px 4px;
         font-size: 14px;
-        max-width: 98vw;
-        border-radius: 0;
+        max-width: 95vw;
+        border-radius: var(--border-radius);
     }
 
     .messageIcon, .fromOperatorIcon {
