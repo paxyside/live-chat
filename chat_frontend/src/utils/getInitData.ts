@@ -1,8 +1,9 @@
 import type {AuthPayload} from "@/types";
 import {generateMockPayload, serializePayloadToInitData} from "./authPayload";
+import {retrieveRawInitData} from "@telegram-apps/sdk";
 
 export const getInitData = (): string => {
-  let initData = window.Telegram?.WebApp?.initData;
+  let initData = retrieveRawInitData();
   if (!initData) {
     let mockPayload: AuthPayload | null = JSON.parse(
       sessionStorage.getItem("mockPayload") || "null"
