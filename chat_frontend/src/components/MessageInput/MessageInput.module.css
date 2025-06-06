@@ -56,8 +56,11 @@
 @media (max-width: 600px) {
     .inputRow {
         padding: 0.35rem 0.25rem;
-        border-radius: 0 0 var(--border-radius) var(--border-radius);
+        border-radius: 0;
         gap: 0.3rem;
+        width: 100vw;
+        min-width: 100vw;
+        box-sizing: border-box;
     }
 
     .input {
@@ -68,5 +71,6 @@
 
     .sendButton {
         padding: 0.4rem;
+        box-shadow: none;
     }
 }

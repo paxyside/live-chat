@@ -1,11 +1,21 @@
 .container {
     width: 100%;
+    min-height: 100dvh;
+    min-width: 100dvw;
     height: 100%;
     overflow-y: auto;
     background: var(--bg-secondary);
     padding: 0 0 10px 0;
     border-radius: 0 0 16px 16px;
     transition: background var(--transition);
+}
+
+@media (max-width: 900px) {
+    .container {
+        min-height: 100dvh;
+        min-width: 100dvw;
+        border-radius: 0;
+    }
 }
 
 .list {

@@ -1,7 +1,7 @@
 .layout {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 100dvh;
     background: var(--bg-main);
     position: relative;
     transition: background var(--transition);
@@ -15,10 +15,10 @@
 .sidebar {
     position: absolute;
     top: 0;
-    left: -100vw;
-    width: 80vw;
+    left: -100dvw;
+    width: 80dvw;
     max-width: 340px;
-    height: 100vh;
+    height: 100dvh;
     background: var(--bg-secondary);
     box-shadow: var(--shadow);
     z-index: 30;
@@ -30,23 +30,6 @@
 
 .sidebar[data-open="true"] {
     left: 0;
-}
-
-.sidebarBackButton {
-    margin: 12px;
-    background: var(--muted-dark);
-    color: var(--bg-secondary);
-    border-radius: 12px;
-    padding: 10px 10px;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    transition: background var(--transition), box-shadow var(--transition);
-}
-
-.sidebarBackButton:hover,
-.sidebarBackButton:focus {
-    background: var(--muted-text);
-    box-shadow: 0 4px 24px rgba(51, 144, 236, 0.18);
 }
 
 .overlay {
@@ -69,10 +52,9 @@
     transition: margin-left var(--transition);
 }
 
-
 .container {
-    min-height: 100vh;
-    min-width: 100vw;
+    min-height: 100dvh;
+    min-width: 100dvw;
     display: flex;
     align-items: stretch;
     justify-content: center;
@@ -124,21 +106,21 @@
 
 @media (max-width: 900px) {
     .container {
-        min-width: 100vw;
-        min-height: 100vh;
+        min-width: 100dvw;
+        min-height: 100dvh;
         padding: 0;
         border-radius: 0;
         box-shadow: none;
     }
 
     .layout {
-        width: 100vw;
-        max-width: 100vw;
-        min-height: 100vh;
+        width: 100dvw;
+        max-width: 100dvw;
+        min-height: 100dvh;
         margin: 0;
         border-radius: 0;
         box-shadow: none;
-        position: fixed;
+        position: absolute;
         left: 0;
         top: 0;
         right: 0;
@@ -147,10 +129,10 @@
 
     .sidebar {
         position: absolute;
-        left: -100vw;
+        left: -100dvw;
         top: 0;
         border-radius: 0;
-        height: 100vh;
+        height: 100dvh;
     }
 
     .sidebar[data-open="true"] {
@@ -164,6 +146,6 @@
     .userLayout {
         border-radius: 0;
         box-shadow: none;
-        width: 100vw;
+        width: 100dvw;
     }
 }

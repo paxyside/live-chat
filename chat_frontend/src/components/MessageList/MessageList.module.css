@@ -6,6 +6,8 @@
     padding: 16px;
     flex: 1 1 0%;
     height: 100%;
+    min-width: 100dvw;
+    min-height: 0;
     scroll-behavior: smooth;
     background: var(--bg-main);
     color: var(--text-main);
@@ -31,7 +33,7 @@
     .container {
         padding: 8px 2px;
         gap: 4px;
-        flex: 1 1 0%;
-        height: 100%;
+        min-width: 100dvw;
+        border-radius: 0;
     }
 }

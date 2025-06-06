@@ -1,6 +1,6 @@
 .container {
-    min-height: 100vh;
-    min-width: 100vw;
+    min-height: 100dvh;
+    min-width: 100dvw;
     display: flex;
     align-items: stretch;
     justify-content: center;

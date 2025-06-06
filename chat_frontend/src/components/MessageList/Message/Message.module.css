@@ -131,15 +131,25 @@
 
 @media (max-width: 600px) {
     .messageBubble {
-        padding: 7px 8px;
+        padding: 7px 4px;
         font-size: 14px;
-        max-width: 96vw;
+        max-width: 98vw;
+        border-radius: 0;
     }
 
     .messageIcon, .fromOperatorIcon {
         width: 20px;
         height: 20px;
-        margin-right: 4px;
-        margin-left: 4px;
+        margin-right: 2px;
+        margin-left: 2px;
+    }
+
+    .deleteMessagePopup {
+        left: 0;
+        right: 0;
+        min-width: 90vw;
+        max-width: 98vw;
+        border-radius: 0 0 8px 8px;
+        padding: 6px 4px;
     }
 }
