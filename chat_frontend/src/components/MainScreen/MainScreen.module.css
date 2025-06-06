@@ -1,0 +1,10 @@
+.container {
+    min-height: 100vh;
+    min-width: 100vw;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    background: var(--bg-main);
+    color: var(--text-main);
+    transition: background var(--transition), color var(--transition);
+}

@@ -1,0 +1,75 @@
+services:
+  backend:
+    build:
+      context: ./chat_backend
+      dockerfile: Dockerfile
+    depends_on:
+      - database
+    container_name: "backend"
+    ports:
+      - "8008:8008"
+      - "8009:8009"
+    networks:
+      live_chat_network:
+    restart: unless-stopped
+    volumes:
+      - ./chat_backend/migrations:/app/migrations/
+      - ./chat_backend/config.yaml:/app/config.yaml
+      - ./chat_backend/.env:/app/.env
+
+  database:
+    image: postgres:17.4-alpine
+    container_name: "database"
+    ports:
+      - "${PG_PORT:-9911}:5432"
+    environment:
+      - POSTGRES_USER=${PG_USER:-postgres}
+      - POSTGRES_PASSWORD=${PG_PASSWORD:-pass}
+      - POSTGRES_DB=${PG_DB:-postgres}
+    networks:
+      live_chat_network:
+    volumes:
+      - live_chat_volume:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U ${PG_USER:-postgres}
+      interval: 30s
+      timeout: 3s
+      retries: 2
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./chat_frontend
+      dockerfile: Dockerfile
+    container_name: "frontend"
+    ports:
+      - "3000:80"
+    networks:
+      live_chat_network:
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./chat_frontend/dist:/usr/share/nginx/html:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - live_chat_network
+    
+networks:
+  live_chat_network:
+    driver: bridge
+
+volumes:
+  live_chat_volume:

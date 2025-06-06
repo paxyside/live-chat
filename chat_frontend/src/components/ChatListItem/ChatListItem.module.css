@@ -1,0 +1,84 @@
+.item {
+    cursor: pointer;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--muted-dark);
+    background: var(--bg-tertiary);
+    transition: background var(--transition), box-shadow var(--transition);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+}
+
+.item:hover,
+.item:focus {
+    background-color: var(--bg-secondary);
+    box-shadow: 0 4px 16px rgba(51, 144, 236, 0.10);
+}
+
+.title {
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: var(--text-main);
+    font-size: 16px;
+    letter-spacing: 0.01em;
+}
+
+.lastMessage {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: var(--muted-text);
+    gap: 10px;
+}
+
+.content {
+    max-width: 70%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-main);
+}
+
+.deleted {
+    color: var(--muted-text);
+    font-style: italic;
+}
+
+.date {
+    color: var(--muted-text);
+    font-size: 12px;
+    white-space: nowrap;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+    .item {
+        padding: 10px 8px;
+        border-radius: 8px;
+        margin-bottom: 4px;
+    }
+
+    .title {
+        font-size: 14px;
+    }
+
+    .lastMessage {
+        font-size: 12px;
+        gap: 6px;
+    }
+
+    .content {
+        max-width: 60%;
+        font-size: 12px;
+    }
+
+    .date {
+        font-size: 11px;
+    }
+}
