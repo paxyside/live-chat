@@ -99,7 +99,7 @@ export const handleWebSocketMessage = (
         break;
       }
       default: {
-        setError(`[ ERROR: ${formatOpCode(msg.op)}, ${msg.data} ]`);
+        setError(`[ ERROR: ${formatOpCode(msg.op)}, ${JSON.stringify(msg.data)} ]`);
         break;
       }
     }
