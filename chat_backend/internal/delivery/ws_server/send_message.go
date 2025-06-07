@@ -9,7 +9,13 @@ import (
 )
 
 func (c *WsController) sendMessage(ctx context.Context, cli *Client, raw json.RawMessage) error {
-	if cli.Meta.TelegramID == nil {
+	tgID, ok := cli.TelegramID()
+	if !ok {
+		return errors.New("not authorized")
+	}
+
+	isOperator, ok := cli.IsOperator()
+	if !ok {
 		return errors.New("not authorized")
 	}
 
@@ -23,7 +29,7 @@ func (c *WsController) sendMessage(ctx context.Context, cli *Client, raw json.Ra
 		return errors.Wrap(err, "json.Unmarshal")
 	}
 
-	msg, err := c.svc.CreateMessage(ctx, request.ChatID, *cli.Meta.TelegramID, request.Content, request.IsOperator)
+	msg, err := c.svc.CreateMessage(ctx, request.ChatID, tgID, request.Content, request.IsOperator)
 	if err != nil {
 		return errors.Wrap(err, "c.svc.CreateMessage")
 	}
@@ -33,14 +39,14 @@ func (c *WsController) sendMessage(ctx context.Context, cli *Client, raw json.Ra
 		return errors.Wrap(err, "json.Marshal")
 	}
 
-	c.connections.Broadcast(request.ChatID, WSMessage{
+	c.connections.BroadcastToChat(request.ChatID, WSMessage{
 		Op:   OpMessageNew,
 		Data: rawMsg,
 	})
 
 	var chats []domain.ChatWithLastMessage
 
-	if !*cli.Meta.IsOperator {
+	if !isOperator {
 		chats, err = c.svc.ListAllChats(ctx)
 		if err != nil {
 			return errors.Wrap(err, "c.svc.ListAllChats")
@@ -51,7 +57,7 @@ func (c *WsController) sendMessage(ctx context.Context, cli *Client, raw json.Ra
 			return errors.Wrap(err, "json.Marshal")
 		}
 
-		c.connections.BroadcastToOperator(WSMessage{
+		c.connections.BroadcastToOperators(WSMessage{
 			Op:   OpAllChatsSuccess,
 			Data: rawChats,
 		})

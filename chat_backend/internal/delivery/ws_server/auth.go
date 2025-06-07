@@ -45,14 +45,7 @@ func (c *WsController) authClient(ctx context.Context, cli *Client, raw json.Raw
 		return errors.Wrap(err, "usecase.GetOrCreateUser")
 	}
 
-	meta := &ClientMeta{
-		TelegramID: &user.TgID,
-		IsOperator: &user.IsOperator,
-	}
-
-	cli.Meta = meta
-
-	c.connections.Authorize(cli.conn, user.TgID, user.IsOperator)
+	c.connections.Authorize(cli, user.TgID, user.IsOperator)
 
 	rawUser, err := json.Marshal(user)
 	if err != nil {

@@ -8,7 +8,13 @@ import (
 )
 
 func (c *WsController) messageRead(ctx context.Context, cli *Client, raw json.RawMessage) error {
-	if cli.Meta.TelegramID == nil {
+	_, ok := cli.TelegramID()
+	if !ok {
+		return errors.New("not authorized")
+	}
+
+	isOperator, ok := cli.IsOperator()
+	if !ok {
 		return errors.New("not authorized")
 	}
 
@@ -21,7 +27,7 @@ func (c *WsController) messageRead(ctx context.Context, cli *Client, raw json.Ra
 		return errors.Wrap(err, "json.Unmarshal")
 	}
 
-	msg, err := c.svc.MarkMessageAsRead(ctx, request.MessageID, *cli.Meta.IsOperator)
+	msg, err := c.svc.MarkMessageAsRead(ctx, request.MessageID, isOperator)
 	if err != nil {
 		return errors.Wrap(err, "c.svc.MarkMessageAsRead")
 	}
@@ -31,7 +37,7 @@ func (c *WsController) messageRead(ctx context.Context, cli *Client, raw json.Ra
 		return errors.Wrap(err, "json.Marshal")
 	}
 
-	c.connections.Broadcast(request.ChatID, WSMessage{
+	c.connections.BroadcastToChat(request.ChatID, WSMessage{
 		Op:   OpMessageReadSuccess,
 		Data: rawMsg,
 	})

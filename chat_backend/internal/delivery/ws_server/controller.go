@@ -53,12 +53,13 @@ func (c *WsController) Entrypoint(gCtx *gin.Context) {
 func (c *WsController) HandleConnection(ctx context.Context, conn *websocket.Conn) {
 	stopSig := make(chan struct{})
 
-	client := NewClient(conn)
+	client := NewClient(ctx, conn)
 
-	c.connections.Add(conn)
+	c.connections.Register(client)
+
 	defer func() {
-		c.connections.Remove(conn)
-		if err := conn.Close(); err != nil {
+		c.connections.Unregister(client)
+		if err := client.Close(); err != nil {
 			c.l.Error("failed to close connection", slog.Any("error", err))
 		}
 
@@ -87,8 +88,8 @@ func (c *WsController) HandleConnection(ctx context.Context, conn *websocket.Con
 		for {
 			select {
 			case <-ticker.C:
-				if err := client.SafeWriteMessage(websocket.PingMessage, nil); err != nil {
-					if err = client.conn.Close(); err != nil {
+				if err := client.SendMessage(websocket.PingMessage, nil); err != nil {
+					if err = client.Close(); err != nil {
 						c.l.Error("failed to close connection", slog.Any("error", err))
 					}
 
@@ -140,43 +141,29 @@ func (c *WsController) HandleMessage(ctx context.Context, client *Client, raw []
 
 	switch msg.Op {
 	case OpAuth:
-		if err := c.authClient(ctx, client, msg.Data); err != nil {
-			if err = c.sendErrorMessage(client, OpAuthError, err); err != nil {
-				return errors.Wrap(err, "c.sendErrorMessage")
-			}
-
-			return errors.Wrap(err, "c.authClient")
-		}
+		return c.exec(client, OpAuthError, func() error {
+			return c.authClient(ctx, client, msg.Data)
+		})
 	case OpAllChats:
-		if err := c.allChats(ctx, client); err != nil {
-			if err = c.sendErrorMessage(client, OpAllChatsError, err); err != nil {
-				return errors.Wrap(err, "c.sendErrorMessage")
-			}
-		}
+		return c.exec(client, OpAllChatsError, func() error {
+			return c.allChats(ctx, client)
+		})
 	case OpChatOpen:
-		if err := c.chatOpen(ctx, client, msg.Data); err != nil {
-			if err = c.sendErrorMessage(client, OpChatOpenError, err); err != nil {
-				return errors.Wrap(err, "c.sendErrorMessage")
-			}
-		}
+		return c.exec(client, OpChatOpenError, func() error {
+			return c.chatOpen(ctx, client, msg.Data)
+		})
 	case OpMessageSend:
-		if err := c.sendMessage(ctx, client, msg.Data); err != nil {
-			if err = c.sendErrorMessage(client, OpMessageSendError, err); err != nil {
-				return errors.Wrap(err, "c.sendErrorMessage")
-			}
-		}
+		return c.exec(client, OpMessageSendError, func() error {
+			return c.sendMessage(ctx, client, msg.Data)
+		})
 	case OpMessageRead:
-		if err := c.messageRead(ctx, client, msg.Data); err != nil {
-			if err = c.sendErrorMessage(client, OpMessageReadError, err); err != nil {
-				return errors.Wrap(err, "c.sendErrorMessage")
-			}
-		}
+		return c.exec(client, OpMessageReadError, func() error {
+			return c.messageRead(ctx, client, msg.Data)
+		})
 	case OpMessageDelete:
-		if err := c.messageDelete(ctx, client, msg.Data); err != nil {
-			if err = c.sendErrorMessage(client, OpMessageDeleteError, err); err != nil {
-				return errors.Wrap(err, "c.sendErrorMessage")
-			}
-		}
+		return c.exec(client, OpMessageDeleteError, func() error {
+			return c.messageDelete(ctx, client, msg.Data)
+		})
 	default:
 		if err := c.sendErrorMessage(client, OpUnknownOp, errors.New("unknown operation: "+msg.Op)); err != nil {
 			return errors.Wrap(err, "c.sendErrorMessage")
@@ -186,18 +173,30 @@ func (c *WsController) HandleMessage(ctx context.Context, client *Client, raw []
 	return nil
 }
 
+func (c *WsController) exec(client *Client, op string, fn func() error) error {
+	if err := fn(); err != nil {
+		if err = c.sendErrorMessage(client, op, err); err != nil {
+			return errors.Wrap(err, "c.sendErrorMessage")
+		}
+		return errors.Wrap(err, "exec")
+	}
+	return nil
+}
+
 func (c *WsController) sendSuccessMessage(client *Client, op string, data json.RawMessage) error {
-	return client.SafeWriteJSON(WSMessage{
-		Op:   op,
-		Data: data,
-	})
+	return client.Send(
+		&WSMessage{
+			Op:   op,
+			Data: data,
+		})
 }
 
 func (c *WsController) sendErrorMessage(client *Client, op string, err error) error {
 	rawMessage := fmt.Sprintf(`{"error": "%s"}`, err.Error())
 
-	return client.SafeWriteJSON(WSMessage{
-		Op:   op,
-		Data: json.RawMessage(rawMessage),
-	})
+	return client.Send(
+		&WSMessage{
+			Op:   op,
+			Data: json.RawMessage(rawMessage),
+		})
 }

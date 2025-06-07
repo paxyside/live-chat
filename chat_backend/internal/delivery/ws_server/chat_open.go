@@ -9,23 +9,22 @@ import (
 )
 
 func (c *WsController) chatOpen(ctx context.Context, cli *Client, raw json.RawMessage) error {
-	if cli.Meta.TelegramID == nil {
+	tgID, ok := cli.TelegramID()
+	if !ok {
+		return errors.New("not authorized")
+	}
+
+	isOperator, ok := cli.IsOperator()
+	if !ok {
 		return errors.New("not authorized")
 	}
 
 	var req struct {
 		ChatID int64 `json:"chat_id"`
 	}
+
 	if err := json.Unmarshal(raw, &req); err != nil {
 		return errors.Wrap(err, "json.Unmarshal")
-	}
-
-	if cli.Meta.IsOperator == nil {
-		user, err := c.svc.GetOrCreateUser(ctx, *cli.Meta.TelegramID, nil)
-		if err != nil {
-			return errors.Wrap(err, "c.svc.GetOrCreateUser")
-		}
-		cli.Meta.IsOperator = &user.IsOperator
 	}
 
 	var (
@@ -33,21 +32,19 @@ func (c *WsController) chatOpen(ctx context.Context, cli *Client, raw json.RawMe
 		err  error
 	)
 
-	if *cli.Meta.IsOperator {
+	if isOperator {
 		chat, err = c.svc.GetChatByID(ctx, req.ChatID)
 		if err != nil {
 			return errors.Wrap(err, "c.svc.GetChatByID")
 		}
-		if chat == nil {
-			return errors.New("chat not found")
-		}
 	} else {
-		chat, err = c.svc.GetChatByTgID(ctx, *cli.Meta.TelegramID)
+		chat, err = c.svc.GetChatByTgID(ctx, tgID)
 		if errors.Is(err, domain.ErrChatNotFound) {
-			chat, err = c.svc.CreateChat(ctx, *cli.Meta.TelegramID)
+			chat, err = c.svc.CreateChat(ctx, tgID)
 			if err != nil {
 				return errors.Wrap(err, "c.svc.CreateChat")
 			}
+
 		} else if err != nil {
 			return errors.Wrap(err, "c.svc.GetChatByTgID")
 		}
@@ -72,6 +69,7 @@ func (c *WsController) chatOpen(ctx context.Context, cli *Client, raw json.RawMe
 	}
 
 	c.connections.JoinChat(cli, chat.ID)
+	cli.SetActiveChat(chat.ID)
 
 	return c.sendSuccessMessage(cli, OpChatOpenSuccess, rawResp)
 }

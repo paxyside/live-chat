@@ -8,11 +8,17 @@ import (
 )
 
 func (c *WsController) allChats(ctx context.Context, cli *Client) error {
-	if cli.Meta.TelegramID == nil {
+	_, ok := cli.TelegramID()
+	if !ok {
 		return errors.New("not authorized")
 	}
 
-	if cli.Meta.IsOperator != nil && !*cli.Meta.IsOperator {
+	isOperator, ok := cli.IsOperator()
+	if !ok {
+		return errors.New("not authorized")
+	}
+
+	if !isOperator {
 		return errors.New("only for operators")
 	}
 

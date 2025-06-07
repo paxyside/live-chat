@@ -65,7 +65,6 @@ func NewApp(l logger.Loggerer) (*App, error) {
 	wsRouter := gin.New()
 	wsRouter.Use(gin.Recovery())
 	wsRouter.Use(delivery.LoggerMiddleware(l))
-	wsRouter.Use(delivery.WsAuthMiddleware(l))
 
 	wsRouter.GET("/ws", wsController.Entrypoint)
 

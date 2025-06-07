@@ -9,133 +9,114 @@ import (
 )
 
 type Manager interface {
-	Add(conn *websocket.Conn)
-	Remove(conn *websocket.Conn)
-	Authorize(conn *websocket.Conn, tgID int64, isOperator bool)
+	Register(client *Client)
+	Unregister(client *Client)
+	Authorize(client *Client, tgID int64, isOperator bool)
 	JoinChat(client *Client, chatID int64)
-	Broadcast(chatID int64, msg WSMessage)
-	BroadcastToOperator(msg WSMessage)
-	GetClient(conn *websocket.Conn) *Client
+	BroadcastToChat(chatID int64, msg WSMessage)
+	BroadcastToOperators(msg WSMessage)
+	GetClientByConn(conn *websocket.Conn) *Client
+	GetOperators() []*Client
+	GetClientsByChat(chatID int64) []*Client
 }
 
 type WsManager struct {
-	mu sync.RWMutex
-	l  logger.Loggerer
-
-	connections         map[*websocket.Conn]*Client
-	operatorConnections map[*websocket.Conn]int64
-	chatClients         map[int64][]*Client
+	mu           sync.RWMutex
+	l            logger.Loggerer
+	clients      map[*Client]struct{}
+	connToClient map[*websocket.Conn]*Client
 }
 
 func NewWsManager(l logger.Loggerer) *WsManager {
 	return &WsManager{
-		l:                   l,
-		connections:         make(map[*websocket.Conn]*Client),
-		operatorConnections: make(map[*websocket.Conn]int64),
-		chatClients:         make(map[int64][]*Client),
+		l:            l,
+		clients:      make(map[*Client]struct{}),
+		connToClient: make(map[*websocket.Conn]*Client),
 	}
 }
 
-func (w *WsManager) Add(conn *websocket.Conn) {
-	w.mu.Lock()
-	defer w.mu.Unlock()
-
-	client := NewClient(conn)
-	w.connections[conn] = client
+func (m *WsManager) Register(client *Client) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.clients[client] = struct{}{}
+	m.connToClient[client.Connection().Raw()] = client
 }
 
-func (w *WsManager) Remove(conn *websocket.Conn) {
-	w.mu.Lock()
-	defer w.mu.Unlock()
+func (m *WsManager) Unregister(client *Client) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	delete(m.clients, client)
+	delete(m.connToClient, client.Connection().Raw())
+}
 
-	client, ok := w.connections[conn]
-	if !ok {
-		return
-	}
+func (m *WsManager) Authorize(client *Client, tgID int64, isOperator bool) {
+	client.SetIdentity(&tgID, &isOperator)
+}
 
-	for chatID, clients := range w.chatClients {
-		for i, c := range clients {
-			if c == client {
-				w.chatClients[chatID] = append(clients[:i], clients[i+1:]...)
-				break
+func (m *WsManager) JoinChat(client *Client, chatID int64) {
+	client.SetActiveChat(chatID)
+}
+
+func (m *WsManager) BroadcastToChat(chatID int64, msg WSMessage) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	for client := range m.clients {
+		if client.InChat(chatID) {
+			if err := client.Send(&msg); err != nil {
+				m.l.Error("broadcast to chat failed", slog.Any("err", err))
 			}
-
-			if len(w.chatClients[chatID]) == 0 {
-				delete(w.chatClients, chatID)
-			}
-		}
-	}
-
-	delete(w.operatorConnections, conn)
-	delete(w.connections, conn)
-}
-
-func (w *WsManager) Authorize(conn *websocket.Conn, tgID int64, isOperator bool) {
-	w.mu.Lock()
-	defer w.mu.Unlock()
-
-	client, ok := w.connections[conn]
-	if !ok {
-		return
-	}
-
-	client.Meta.TelegramID = &tgID
-	client.Meta.IsOperator = &isOperator
-
-	w.chatClients[tgID] = append(w.chatClients[tgID], client)
-
-	if isOperator {
-		w.operatorConnections[conn] = tgID
-	}
-}
-
-func (w *WsManager) JoinChat(client *Client, chatID int64) {
-	w.mu.Lock()
-	defer w.mu.Unlock()
-
-	for _, c := range w.chatClients[chatID] {
-		if c == client {
-			return
-		}
-	}
-
-	w.chatClients[chatID] = append(w.chatClients[chatID], client)
-}
-
-func (w *WsManager) Broadcast(chatID int64, msg WSMessage) {
-	w.mu.RLock()
-	defer w.mu.RUnlock()
-
-	clients := w.chatClients[chatID]
-
-	for _, client := range clients {
-		if err := client.SafeWriteJSON(msg); err != nil {
-			w.l.Error("Error broadcasting message to client", slog.Any("error", err))
-			continue
 		}
 	}
 }
 
-func (w *WsManager) BroadcastToOperator(msg WSMessage) {
-	w.mu.RLock()
-	defer w.mu.RUnlock()
-
-	for conn := range w.operatorConnections {
-		client, ok := w.connections[conn]
+func (m *WsManager) BroadcastToOperators(msg WSMessage) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	for client := range m.clients {
+		isOp, ok := client.IsOperator()
 		if !ok {
 			continue
 		}
 
-		if err := client.SafeWriteJSON(msg); err != nil {
-			w.l.Error("Error broadcasting message to operator", slog.Any("error", err))
-			continue
+		if isOp {
+			if err := client.Send(&msg); err != nil {
+				m.l.Error("broadcast to operator failed", slog.Any("err", err))
+			}
 		}
 	}
 }
 
-func (w *WsManager) GetClient(conn *websocket.Conn) *Client {
-	w.mu.RLock()
-	defer w.mu.RUnlock()
+func (m *WsManager) GetClientByConn(conn *websocket.Conn) *Client {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	return m.connToClient[conn]
+}
 
-	return w.connections[conn]
+func (m *WsManager) GetOperators() []*Client {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	var ops []*Client
+	for client := range m.clients {
+		isOp, ok := client.IsOperator()
+		if !ok {
+			continue
+		}
+
+		if isOp {
+			ops = append(ops, client)
+		}
+	}
+	return ops
+}
+
+func (m *WsManager) GetClientsByChat(chatID int64) []*Client {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	var res []*Client
+	for client := range m.clients {
+		if client.InChat(chatID) {
+			res = append(res, client)
+		}
+	}
+	return res
 }

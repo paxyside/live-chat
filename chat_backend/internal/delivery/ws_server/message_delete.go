@@ -8,7 +8,8 @@ import (
 )
 
 func (c *WsController) messageDelete(ctx context.Context, cli *Client, raw json.RawMessage) error {
-	if cli.Meta.TelegramID == nil {
+	_, ok := cli.TelegramID()
+	if !ok {
 		return errors.New("not authorized")
 	}
 
@@ -31,7 +32,7 @@ func (c *WsController) messageDelete(ctx context.Context, cli *Client, raw json.
 		return errors.Wrap(err, "json.Marshal")
 	}
 
-	c.connections.Broadcast(request.ChatID, WSMessage{
+	c.connections.BroadcastToChat(request.ChatID, WSMessage{
 		Op:   OpMessageDeleteSuccess,
 		Data: rawMsg,
 	})

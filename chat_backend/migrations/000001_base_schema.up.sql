@@ -13,7 +13,7 @@ CREATE TABLE users
 CREATE TABLE chats
 (
     id         SERIAL PRIMARY KEY,
-    tg_id      INTEGER     NOT NULL REFERENCES users (tg_id) ON DELETE CASCADE,
+    tg_id      BIGINT     NOT NULL REFERENCES users (tg_id) ON DELETE CASCADE,
     created_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -21,7 +21,7 @@ CREATE TABLE messages
 (
     id                  SERIAL PRIMARY KEY,
     chat_id             INTEGER     NOT NULL REFERENCES chats (id) ON DELETE CASCADE,
-    sender_tg_id        INTEGER     NOT NULL REFERENCES users (tg_id) ON DELETE CASCADE,
+    sender_tg_id        BIGINT     NOT NULL REFERENCES users (tg_id) ON DELETE CASCADE,
     content             TEXT,
     is_from_operator    BOOLEAN     NOT NULL,
     created_at          timestamptz NOT NULL DEFAULT now(),

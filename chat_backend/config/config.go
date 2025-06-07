@@ -18,7 +18,6 @@ func LoadConfig() error {
 
 	_ = viper.BindEnv("app.db.uri", "DB_URI")
 	_ = viper.BindEnv("app.telegram.bot_token", "TELEGRAM_BOT_TOKEN")
-	_ = viper.BindEnv("app.auth.ws_token", "AUTH_WS_TOKEN")
 
 	if err := viper.ReadInConfig(); err != nil {
 		return errors.Wrap(err, "viper.ReadInConfig")
