@@ -29,20 +29,18 @@ const ChatLayoutInner: React.FC<ChatLayoutInnerProps> = ({
                                                          }) => {
   return (
     <div className={styles.layout}>
-      {chatId !== null && (
-        <main className={styles.main}>
-          <ErrorMessage error={error}/>
-          <ChatWindow
-            chatId={chatId}
-            chats={chats}
-            messages={messages}
-            isOperator={isOperator}
-            onOpenChat={onOpenChat}
-            onSendMessage={onSendMessage}
-            onDeleteMessage={onDeleteMessage}
-          />
-        </main>
-      )}
+      <main className={styles.main}>
+        <ErrorMessage error={error}/>
+        <ChatWindow
+          chatId={chatId}
+          chats={chats}
+          messages={messages}
+          isOperator={isOperator}
+          onOpenChat={onOpenChat}
+          onSendMessage={onSendMessage}
+          onDeleteMessage={onDeleteMessage}
+        />
+      </main>
     </div>
   );
 };
