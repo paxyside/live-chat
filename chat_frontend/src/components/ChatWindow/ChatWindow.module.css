@@ -1,14 +1,13 @@
 .window {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    min-height: 100dvh;
-    min-width: 100dvw;
+    height: 100dvh;
+    width: 100%;
     background: var(--bg-secondary);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
-    padding: 0 12px 12px 12px;
-    transition: box-shadow var(--transition), background var(--transition);
+    padding: 0 12px 12px;
+    transition: background var(--transition), box-shadow var(--transition);
     position: relative;
 }
 
@@ -16,65 +15,160 @@
     height: 48px;
     display: flex;
     align-items: center;
+    background: var(--bg-main);
+    backdrop-filter: blur(8px);
     position: sticky;
     top: 0;
-    left: 0;
-    z-index: 2;
-    background: rgba(35, 38, 47, 0.72);
-    backdrop-filter: blur(8px);
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    z-index: 10;
     padding: 0;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
 }
 
 .chatListButton {
-    width: 100%;
-    height: 100%;
+    height: 40px;
+    width: 40px;
+    margin-left: 8px;
     background: var(--muted-dark);
     color: var(--bg-secondary);
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
-    padding: 0;
-    font-size: 18px;
+    border: none;
+    border-radius: var(--border-radius);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: var(--shadow);
     transition: background var(--transition), box-shadow var(--transition);
-    border: none;
-    margin: 0;
 }
 
 .chatListButton:hover,
 .chatListButton:focus {
     background: var(--muted-text);
-    box-shadow: 0 4px 24px rgba(51, 144, 236, 0.18);
+    box-shadow: 0 4px 24px var(--bg-tertiary);
     outline: none;
 }
 
 .messageListWrapper {
-    flex: 1 1 0;
+    flex: 1;
     min-height: 0;
-    margin-top: 8px;
     width: 100%;
+    overflow-y: auto;
+    margin-top: 8px;
 }
 
+/* SIDEBAR */
+
+.sidebar {
+    position: absolute;
+    top: 0;
+    left: -100dvw;
+    width: 80%;
+    max-width: 320px;
+    height: 100%;
+    background: var(--bg-secondary);
+    z-index: 30;
+    transition: left var(--transition);
+    display: flex;
+    flex-direction: column;
+    border-radius: 0 16px 16px 0;
+    box-shadow: var(--shadow);
+}
+
+.sidebar[data-open="true"] {
+    left: 0;
+}
+
+.sidebarBackButton {
+    height: 48px;
+    width: 100vw;
+    background: var(--muted-dark);
+    color: var(--bg-secondary);
+    border: none;
+    border-radius: var(--border-radius-bottom);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: background var(--transition), box-shadow var(--transition);
+    flex-shrink: 0;
+}
+
+
+.sidebarBackButton:hover,
+.sidebarBackButton:focus {
+    background: var(--muted-text);
+    box-shadow: 0 4px 24px var(--bg-tertiary);
+    outline: none;
+}
+
+/* OVERLAY when sidebar is open */
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100dvw;
+    height: 100dvh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 20;
+}
+
+/* MEDIA */
 @media (max-width: 900px) {
+    .chatListButton {
+        width: 36px;
+        height: 36px;
+    }
+
     .window {
-        min-height: 100dvh;
-        min-width: 100dvw;
         border-radius: 0;
         box-shadow: none;
         background: var(--bg-main);
-        padding: 0 2px 6px 2px;
+        padding: 0 4px 8px;
     }
 
     .header {
-        height: 40px;
+        height: 44px;
         border-radius: 0;
     }
+}
 
+@media (max-width: 1200px) {
     .chatListButton {
-        font-size: 16px;
-        padding: 7px 10px;
+        width: 36px;
+        height: 36px;
+    }
+
+    .window {
+        border-radius: 0;
+        box-shadow: none;
+        background: var(--bg-main);
+        padding: 0 4px 8px;
+    }
+
+    .header {
+        height: 44px;
+        border-radius: 0;
+    }
+}
+
+@media (max-width: 1600px) {
+    .chatListButton {
+        width: 36px;
+        height: 36px;
+    }
+
+    .window {
+        border-radius: 0;
+        box-shadow: none;
+        background: var(--bg-main);
+        padding: 0 4px 8px;
+    }
+
+    .header {
+        height: 44px;
+        border-radius: 0;
     }
 }

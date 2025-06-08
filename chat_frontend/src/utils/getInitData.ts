@@ -3,16 +3,26 @@ import {generateMockPayload, serializePayloadToInitData} from "./authPayload";
 import {retrieveRawInitData} from "@telegram-apps/sdk";
 
 export const getInitData = (): string => {
-  let initData = retrieveRawInitData();
-  if (!initData) {
-    let mockPayload: AuthPayload | null = JSON.parse(
-      sessionStorage.getItem("mockPayload") || "null"
-    );
-    if (!mockPayload) {
-      mockPayload = generateMockPayload();
-      sessionStorage.setItem("mockPayload", JSON.stringify(mockPayload));
-    }
-    initData = serializePayloadToInitData(mockPayload);
+  try {
+    const initData = retrieveRawInitData();
+    if (initData) return initData;
+  } catch (e) {
+    console.warn("Failed to retrieve Telegram init data:", e);
   }
-  return initData;
+
+  // Fallback to mock data for local dev
+  let mockPayload: AuthPayload | null = null;
+
+  try {
+    mockPayload = JSON.parse(sessionStorage.getItem("mockPayload") || "null");
+  } catch {
+    mockPayload = null;
+  }
+
+  if (!mockPayload) {
+    mockPayload = generateMockPayload();
+    sessionStorage.setItem("mockPayload", JSON.stringify(mockPayload));
+  }
+
+  return serializePayloadToInitData(mockPayload);
 };

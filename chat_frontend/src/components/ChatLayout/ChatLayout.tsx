@@ -1,8 +1,7 @@
-import React, {useState} from "react";
+import React from "react";
 import type {ChatMessage, ChatWithLastMessage} from "@/types";
 import AuthLayout from "./AuthLayout";
-import OperatorLayout from "./OperatorLayout";
-import UserLayout from "./UserLayout";
+import ChatLayoutInner from "./ChatLayoutInner";
 
 interface ChatRootProps {
   connected: boolean;
@@ -29,33 +28,18 @@ const ChatLayout: React.FC<ChatRootProps> = ({
                                                handleSendMessage,
                                                handleDeleteMessage,
                                              }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   if (!connected || !authenticated) {
     return <AuthLayout error={error}/>;
   }
 
-  return isOperator ? (
-    <OperatorLayout
-      error={error}
-      chatId={chatId}
-      chats={chats}
-      messages={messages}
-      sidebarOpen={sidebarOpen}
-      onOpenSidebar={() => setSidebarOpen(true)}
-      onCloseSidebar={() => setSidebarOpen(false)}
-      onOpenChat={(id) => {
-        handleOpenChat(id);
-        setSidebarOpen(false);
-      }}
-      onSendMessage={handleSendMessage}
-      onDeleteMessage={handleDeleteMessage}
-    />
-  ) : (
-    <UserLayout
+  return (
+    <ChatLayoutInner
+      isOperator={isOperator}
       chatId={chatId}
       error={error}
+      chats={isOperator ? chats : []}
       messages={messages}
+      onOpenChat={isOperator ? handleOpenChat : undefined}
       onSendMessage={handleSendMessage}
       onDeleteMessage={handleDeleteMessage}
     />

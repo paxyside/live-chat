@@ -1,30 +1,32 @@
 import React, {useState} from "react";
 import MessageList from "../MessageList/MessageList.tsx";
 import MessageInput from "../MessageInput/MessageInput.tsx";
-import type {ChatMessage} from "@/types";
+import {ChatList} from "@/components/ChatList";
+import {AlignJustify, PanelLeftClose} from "lucide-react";
+import type {ChatMessage, ChatWithLastMessage} from "@/types";
 import styles from "./ChatWindow.module.css";
-import {AlignJustify} from "lucide-react";
 
 interface ChatWindowProps {
   chatId: number | null;
   messages: ChatMessage[];
+  chats: ChatWithLastMessage[] | [];
   onSendMessage: (message: string) => void;
   isOperator: boolean;
-  showListButton: boolean;
+  onOpenChat: (id: number) => void;
   onDeleteMessage?: (chatId: number, id: number) => void;
-  onOpenChatList?: () => void;
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({
                                                  chatId,
                                                  messages,
+                                                 chats,
                                                  onSendMessage,
                                                  isOperator,
-                                                 showListButton,
+                                                 onOpenChat,
                                                  onDeleteMessage,
-                                                 onOpenChatList,
                                                }) => {
   const [input, setInput] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleSend = () => {
     if (input.trim()) {
@@ -35,17 +37,45 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
   return (
     <div className={styles.window}>
-      {showListButton && (
+      {isOperator && (
+        <>
+          <aside className={styles.sidebar} data-open={sidebarOpen}>
+            <button
+              className={styles.sidebarBackButton}
+              onClick={() => setSidebarOpen(false)}
+              aria-label="Close sidebar"
+            >
+              <PanelLeftClose size={24}/>
+            </button>
+            <ChatList chats={chats} onOpenChat={(id) => {
+              onOpenChat(id);
+              setSidebarOpen(false);
+            }}/>
+          </aside>
+
+          {sidebarOpen && (
+            <button
+              type="button"
+              className={styles.overlay}
+              onClick={() => setSidebarOpen(false)}
+              aria-label="Close sidebar"
+            />
+          )}
+        </>
+      )}
+
+      {isOperator && (
         <div className={styles.header}>
           <button
             className={styles.chatListButton}
-            onClick={onOpenChatList}
+            onClick={() => setSidebarOpen(true)}
             aria-label="Open chat list"
           >
             <AlignJustify size={24}/>
           </button>
         </div>
       )}
+
       <div className={styles.messageListWrapper}>
         <MessageList
           chatId={chatId}
@@ -54,6 +84,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           onDelete={onDeleteMessage}
         />
       </div>
+
       <MessageInput input={input} setInput={setInput} onSend={handleSend}/>
     </div>
   );

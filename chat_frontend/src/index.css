@@ -8,6 +8,7 @@
     --error-bg: #2d1a1a;
     --error-text: #ff6b6b;
     --border-radius: 16px;
+    --border-radius-bottom: 0 0 16px 16px;
     --muted-text: #b0b8c1;
     --muted-dark: #7a8599;
     --shadow: 0 2px 16px rgba(0, 0, 0, 0.10);
@@ -15,13 +16,12 @@
 }
 
 html, body, #root {
-    min-height: 100dvh !important;
-    min-width: 100dvw !important;
-    height: 100dvh !important;
-    width: 100dvw !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
+    height: 100%;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
     background: var(--bg-main);
     color: var(--text-main);
     font-family: 'Inter', 'SF Pro Display', Arial, sans-serif;
@@ -32,8 +32,8 @@ html, body, #root {
     scroll-behavior: smooth;
 }
 
-* {
-    box-sizing: border-box;
+*, *::before, *::after {
+    box-sizing: inherit;
     -webkit-tap-highlight-color: transparent;
 }
 

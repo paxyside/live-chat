@@ -3,15 +3,17 @@
     flex-direction: column;
     gap: 8px;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 16px;
     flex: 1 1 0%;
     height: 100%;
-    min-width: 100dvw;
+    width: 100%;
     min-height: 0;
     scroll-behavior: smooth;
     background: var(--bg-main);
     color: var(--text-main);
     transition: background var(--transition), color var(--transition);
+    box-sizing: border-box;
 }
 
 .messageAppear {
@@ -33,7 +35,7 @@
     .container {
         padding: 8px 2px;
         gap: 4px;
-        min-width: 100dvw;
         border-radius: 0;
+        width: 100%;
     }
 }
