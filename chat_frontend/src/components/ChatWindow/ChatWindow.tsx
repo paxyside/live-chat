@@ -71,7 +71,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
             onClick={() => setSidebarOpen(true)}
             aria-label="Open chat list"
           >
-            <AlignJustify size={24}/>
+            <AlignJustify size={32}/>
           </button>
         </div>
       )}
