@@ -45,7 +45,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
               onClick={() => setSidebarOpen(false)}
               aria-label="Close sidebar"
             >
-              <PanelLeftClose size={24}/>
+              <PanelLeftClose size={32}/>
             </button>
             <ChatList chats={chats} onOpenChat={(id) => {
               onOpenChat(id);

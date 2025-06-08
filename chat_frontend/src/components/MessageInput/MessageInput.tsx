@@ -30,7 +30,7 @@ const MessageInput: React.FC<Props> = ({input, setInput, onSend}) => {
         aria-label="Send message"
         type="button"
       >
-        <SendHorizonal size={24}/>
+        <SendHorizonal size={32}/>
       </button>
     </div>
   );
