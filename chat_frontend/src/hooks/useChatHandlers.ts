@@ -3,10 +3,9 @@ import handleOpenChat from "../handlers/handleOpenChat";
 import handleReadMessage from "../handlers/handleReadMessage";
 import handleDeleteMessage from "../handlers/handleDeleteMessage";
 import handleSendMessage from "../handlers/handleSendMessage";
-import type {ChatMessage} from "@/types";
+import type {ChatMessage, TypingMap} from "@/types";
 import handleEditMessage from "@/handlers/handleEditMessage.ts";
 import handleTypingMessage from "@/handlers/handleTypingMessage.ts";
-import type {TypingMap} from "@/hooks/useChatApp.ts";
 
 interface UseChatHandlersProps {
   setChatId: React.Dispatch<React.SetStateAction<number | null>>;

@@ -42,3 +42,5 @@ export interface ChatWithLastMessage {
   chat: Chat;
   last_message: ChatMessage;
 }
+
+export type TypingMap = Record<number, { user: boolean; operator: boolean }>;

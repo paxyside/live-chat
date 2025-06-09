@@ -1,7 +1,7 @@
 import React, {useRef} from "react";
-import {SendHorizonal} from "lucide-react";
 import styles from "./MessageInput.module.css";
-import clsx from "classnames";
+import TypingIndicator from "@/components/MessageInput/TypingIndicator.tsx";
+import SendButton from "@/components/MessageInput/SendButton.tsx";
 
 interface Props {
   input: string;
@@ -33,11 +33,7 @@ const MessageInput: React.FC<Props> = ({input, setInput, onSend, typing, onTypin
 
   return (
     <>
-      {showTyping && (
-        <div className={styles.typingIndicator}>
-          {isOperator ? "User is typing..." : "Operator is typing..."}
-        </div>
-      )}
+      <TypingIndicator show={showTyping} isOperator={isOperator}/>
       <div className={styles.inputRow}>
         <input
           className={styles.input}
@@ -46,15 +42,7 @@ const MessageInput: React.FC<Props> = ({input, setInput, onSend, typing, onTypin
           placeholder="Enter message..."
           onKeyDown={handleKeyDown}
         />
-        <button
-          className={clsx(styles.sendButton)}
-          onClick={onSend}
-          disabled={!input.trim()}
-          aria-label="Send message"
-          type="button"
-        >
-          <SendHorizonal size={32}/>
-        </button>
+        <SendButton onClick={onSend} disabled={!input.trim()}/>
       </div>
     </>
   );

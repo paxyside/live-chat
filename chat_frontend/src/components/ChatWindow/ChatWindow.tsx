@@ -1,8 +1,9 @@
 import React, {useState} from "react";
 import MessageList from "../MessageList/MessageList.tsx";
 import MessageInput from "../MessageInput/MessageInput.tsx";
-import {ChatList} from "@/components/ChatList";
-import {AlignJustify, PanelLeftClose} from "lucide-react";
+import ChatWindowSidebar from "./ChatWindowSidebar";
+import ChatWindowSidebarOverlay from "./ChatWindowSidebarOverlay";
+import ChatWindowHeader from "./ChatWindowHeader";
 import type {ChatMessage, ChatWithLastMessage} from "@/types";
 import styles from "./ChatWindow.module.css";
 
@@ -47,41 +48,20 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     <div className={styles.window}>
       {isOperator && (
         <>
-          <aside className={styles.sidebar} data-open={sidebarOpen}>
-            <button
-              className={styles.sidebarBackButton}
-              onClick={() => setSidebarOpen(false)}
-              aria-label="Close sidebar"
-            >
-              <PanelLeftClose size={32}/>
-            </button>
-            <ChatList chats={chats} onOpenChat={(id) => {
-              onOpenChat(id);
-              setSidebarOpen(false);
-            }}/>
-          </aside>
-
+          <ChatWindowSidebar
+            chats={chats}
+            onOpenChat={onOpenChat}
+            onClose={() => setSidebarOpen(false)}
+            sidebarOpen={sidebarOpen}
+          />
           {sidebarOpen && (
-            <button
-              type="button"
-              className={styles.overlay}
-              onClick={() => setSidebarOpen(false)}
-              aria-label="Close sidebar"
+            <ChatWindowSidebarOverlay
+              onClose={() => setSidebarOpen(false)}
+              sidebarOpen={sidebarOpen}
             />
           )}
+          <ChatWindowHeader onOpenSidebar={() => setSidebarOpen(true)} />
         </>
-      )}
-
-      {isOperator && (
-        <div className={styles.header}>
-          <button
-            className={styles.chatListButton}
-            onClick={() => setSidebarOpen(true)}
-            aria-label="Open chat list"
-          >
-            <AlignJustify size={32}/>
-          </button>
-        </div>
       )}
 
       <div className={styles.messageListWrapper}>

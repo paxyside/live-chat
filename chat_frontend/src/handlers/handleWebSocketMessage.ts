@@ -1,7 +1,7 @@
-import type {TypingMap} from "@/hooks/useChatApp";
-import type {ChatMessage, ChatWithLastMessage, WsMessage,} from "@/types";
+import type {ChatMessage, ChatWithLastMessage, TypingMap, WsMessage,} from "@/types";
 import {formatOpCode} from "@/utils/formatOpCode";
 import React from "react";
+import {handleTypingSuccess} from "@/handlers/handleTypingSuccess.ts";
 
 interface Handlers {
   chatId: number | null;
@@ -113,46 +113,8 @@ export const handleWebSocketMessage = (
         break;
       }
       case "message_typing_success": {
-        const data = msg.data as { is_operator: boolean, chat_id?: number };
-        const chatId = data.chat_id ?? -1;
-        if (typeof handlers.setTyping === 'function' && chatId !== -1) {
-          handlers.setTyping((prev: TypingMap) => {
-            const role = data.is_operator ? 'operator' : 'user';
-            const prevChat = prev[chatId] || {user: false, operator: false};
-            return {
-              ...prev,
-              [chatId]: {
-                ...prevChat,
-                [role]: true,
-              },
-            };
-          });
-          if (typeof window !== 'undefined') {
-            type TimeoutRole = 'user' | 'operator';
-
-            interface TimeoutMap {
-              [chatId: number]: Partial<Record<TimeoutRole, ReturnType<typeof setTimeout>>>;
-            }
-
-            const w = window as Window & { typingTimeouts?: TimeoutMap };
-            if (!w.typingTimeouts) w.typingTimeouts = {};
-            const role: TimeoutRole = data.is_operator ? 'operator' : 'user';
-            if (w.typingTimeouts[chatId]?.[role]) clearTimeout(w.typingTimeouts[chatId][role]);
-            if (!w.typingTimeouts[chatId]) w.typingTimeouts[chatId] = {};
-            w.typingTimeouts[chatId][role] = setTimeout(() => {
-              handlers.setTyping((prev: TypingMap) => {
-                const prevChat = prev[chatId] || {user: false, operator: false};
-                return {
-                  ...prev,
-                  [chatId]: {
-                    ...prevChat,
-                    [role]: false,
-                  },
-                };
-              });
-            }, 3000);
-          }
-        }
+        const data = msg.data as { is_operator: boolean; chat_id?: number };
+        handleTypingSuccess(data, handlers.setTyping);
         break;
       }
       default: {

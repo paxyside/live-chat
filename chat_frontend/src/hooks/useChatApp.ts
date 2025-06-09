@@ -1,12 +1,10 @@
 import {useRef, useState} from "react";
-import type {ChatMessage, ChatWithLastMessage} from "@/types";
+import type {ChatMessage, ChatWithLastMessage, TypingMap} from "@/types";
 import useMessages from "./useMessages";
 import useInitialChat from "./useInitialChats";
 import useInitialChatLoad from "./useInitialChatLoad";
 import useWebSocketConnection from "./useWebSocket";
 import useChatHandlers from "./useChatHandlers";
-
-export type TypingMap = Record<number, { user: boolean; operator: boolean }>;
 
 export default function useChatApp(wsUrl: string) {
   const [connected, setConnected] = useState(false);

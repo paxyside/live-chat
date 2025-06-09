@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from "react";
 import type {ChatMessage} from "@/types";
-import {Message} from "@/components/MessageList/Message";
-import styles from "./MessageList.module.css"; // импорт модуля
+import styles from "./MessageList.module.css";
+import {Message} from "@/components/Message";
 
 
 interface Props {

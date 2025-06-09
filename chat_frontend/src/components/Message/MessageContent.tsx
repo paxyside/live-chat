@@ -1,7 +1,9 @@
 import type {ChatMessage} from "@/types";
 import React, {memo, useState} from "react";
-import MessageMeta from "@/components/MessageList/Message/MessageMeta.tsx";
-import MessageDropDownMenu from "@/components/MessageList/Message/MessageDropdownMenu.tsx";
+import MessageMeta from "@/components/Message/MessageMeta.tsx";
+import MessageDropDownMenu from "@/components/Message/MessageDropdownMenu.tsx";
+import MessageEditInput from "@/components/Message/MessageEditInput.tsx";
+import MessageText from "@/components/Message/MessageText.tsx";
 import styles from './Message.module.css';
 
 interface MessageContentProps {
@@ -36,27 +38,18 @@ const MessageContent: React.FC<MessageContentProps> = memo(
     return (
       <div className={styles.messageContent}>
         {isEditing ? (
-          <div className={styles.editContainer}>
-            <input
-              className={styles.editInput}
-              value={editText}
-              onChange={e => setEditText(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === "Enter") handleEditConfirm();
-                if (e.key === "Escape") handleEditCancel();
-              }}
-              autoFocus
-            />
-            <button className={styles.editSaveBtn} onClick={handleEditConfirm}>Сохранить</button>
-            <button className={styles.editCancelBtn} onClick={handleEditCancel}>Отмена</button>
-          </div>
+          <MessageEditInput
+            value={editText}
+            onChange={setEditText}
+            onSave={handleEditConfirm}
+            onCancel={handleEditCancel}
+          />
         ) : (
-          <>
-            <span className={`${styles.messageText} ${message.deleted_at ? styles.deleted : ""}`}>
-              {message.deleted_at ? "Message deleted" : message.content}
-            </span>
-            {message.edited_at && <span className={styles.editedMark}>Edited</span>}
-          </>
+          <MessageText
+            content={message.content}
+            deletedAt={message.deleted_at}
+            editedAt={message.edited_at}
+          />
         )}
         <MessageMeta
           createdAt={message.created_at}

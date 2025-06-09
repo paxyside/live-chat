@@ -1,5 +1,5 @@
 import React, {useRef} from "react";
-import {usePopupClose} from "@/components/MessageList/Message/hooks/usePopupClose.ts";
+import {usePopupClose} from "@/components/Message/hooks/usePopupClose.ts";
 import styles from './Message.module.css';
 
 interface Props {

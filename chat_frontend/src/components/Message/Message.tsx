@@ -1,9 +1,9 @@
 import type {ChatMessage} from "@/types";
 import React from "react";
 import {useHoldToConfirm} from "./hooks/useHoldToConfirm.ts";
-import MessageBubble from "@/components/MessageList/Message/MessageBubble.tsx";
-import MessageContent from "@/components/MessageList/Message/MessageContent.tsx";
-import MessageIcon from "@/components/MessageList/Message/MessageIcon.tsx";
+import MessageBubble from "@/components/Message/MessageBubble.tsx";
+import MessageContent from "@/components/Message/MessageContent.tsx";
+import MessageIcon from "@/components/Message/MessageIcon.tsx";
 import styles from './Message.module.css';
 
 interface Props {
