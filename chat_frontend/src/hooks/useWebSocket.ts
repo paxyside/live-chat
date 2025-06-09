@@ -1,8 +1,7 @@
 import React, {useEffect} from "react";
 import {getInitData} from "../utils/getInitData";
-import type {ChatMessage, ChatWithLastMessage} from "@/types";
+import type {ChatMessage, ChatWithLastMessage, TypingMap} from "@/types";
 import {handleWebSocketMessage} from "@/handlers/handleWebSocketMessage.ts";
-import type {TypingMap} from "./useChatApp";
 
 
 interface Props {
