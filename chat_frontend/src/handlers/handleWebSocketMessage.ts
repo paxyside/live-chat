@@ -1,5 +1,7 @@
+import type {TypingMap} from "@/hooks/useChatApp";
 import type {ChatMessage, ChatWithLastMessage, WsMessage,} from "@/types";
 import {formatOpCode} from "@/utils/formatOpCode";
+import React from "react";
 
 interface Handlers {
   chatId: number | null;
@@ -13,6 +15,7 @@ interface Handlers {
   setChatId: (v: number | null) => void;
   setError: (v: string) => void;
   onReadMessage: (chatId: number, id: number) => void;
+  setTyping: React.Dispatch<React.SetStateAction<TypingMap>>;
 }
 
 export const handleWebSocketMessage = (
@@ -74,6 +77,17 @@ export const handleWebSocketMessage = (
 
         break;
       }
+      case "message_edit_success": {
+        const data = msg.data as ChatMessage;
+
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === data.id ? {...m, content: data.content, edited_at: data.edited_at} : m
+          )
+        );
+
+        break;
+      }
       case "message_read_success": {
         const data = msg.data as ChatMessage;
 
@@ -96,6 +110,49 @@ export const handleWebSocketMessage = (
           )
         );
 
+        break;
+      }
+      case "message_typing_success": {
+        const data = msg.data as { is_operator: boolean, chat_id?: number };
+        const chatId = data.chat_id ?? -1;
+        if (typeof handlers.setTyping === 'function' && chatId !== -1) {
+          handlers.setTyping((prev: TypingMap) => {
+            const role = data.is_operator ? 'operator' : 'user';
+            const prevChat = prev[chatId] || {user: false, operator: false};
+            return {
+              ...prev,
+              [chatId]: {
+                ...prevChat,
+                [role]: true,
+              },
+            };
+          });
+          if (typeof window !== 'undefined') {
+            type TimeoutRole = 'user' | 'operator';
+
+            interface TimeoutMap {
+              [chatId: number]: Partial<Record<TimeoutRole, ReturnType<typeof setTimeout>>>;
+            }
+
+            const w = window as Window & { typingTimeouts?: TimeoutMap };
+            if (!w.typingTimeouts) w.typingTimeouts = {};
+            const role: TimeoutRole = data.is_operator ? 'operator' : 'user';
+            if (w.typingTimeouts[chatId]?.[role]) clearTimeout(w.typingTimeouts[chatId][role]);
+            if (!w.typingTimeouts[chatId]) w.typingTimeouts[chatId] = {};
+            w.typingTimeouts[chatId][role] = setTimeout(() => {
+              handlers.setTyping((prev: TypingMap) => {
+                const prevChat = prev[chatId] || {user: false, operator: false};
+                return {
+                  ...prev,
+                  [chatId]: {
+                    ...prevChat,
+                    [role]: false,
+                  },
+                };
+              });
+            }, 3000);
+          }
+        }
         break;
       }
       default: {

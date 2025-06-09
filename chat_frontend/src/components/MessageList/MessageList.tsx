@@ -9,9 +9,10 @@ interface Props {
   messages: ChatMessage[];
   isOperator: boolean;
   onDelete?: (chatId: number, id: number) => void;
+  onEdit?: (chatId: number, messageId: number, content: string) => void;
 }
 
-const MessageList: React.FC<Props> = ({chatId, messages, isOperator, onDelete}) => {
+const MessageList: React.FC<Props> = ({chatId, messages, isOperator, onDelete, onEdit}) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -29,6 +30,7 @@ const MessageList: React.FC<Props> = ({chatId, messages, isOperator, onDelete}) 
           message={msg}
           isOperator={isOperator}
           onDelete={onDelete}
+          onEdit={onEdit}
           className={styles.messageAppear}
         />
       ))}

@@ -11,6 +11,7 @@ interface Props {
   message: ChatMessage;
   isOperator: boolean;
   onDelete?: (chatId: number, id: number) => void;
+  onEdit?: (chatId: number, messageId: number, content: string) => void;
   className?: string;
 }
 
@@ -19,10 +20,12 @@ const Message: React.FC<Props> = ({
                                     message,
                                     isOperator,
                                     onDelete,
+                                    onEdit,
                                     className,
                                   }) => {
   const canDelete =
     !message.deleted_at && isOperator === message.is_from_operator && onDelete;
+  const canEdit = !message.deleted_at && isOperator === message.is_from_operator && onEdit;
   const {show, handleDown, handleUp, confirm, cancel} = useHoldToConfirm();
 
   const handleConfirmDelete = () => {
@@ -30,11 +33,16 @@ const Message: React.FC<Props> = ({
     onDelete?.(chatId!, message.id);
   };
 
+  const handleConfirmEdit = (content: string) => {
+    confirm();
+    onEdit?.(chatId!, message.id, content);
+  };
+
   return (
     <div
-      onPointerDown={canDelete ? handleDown : undefined}
-      onPointerUp={canDelete ? handleUp : undefined}
-      onPointerLeave={canDelete ? handleUp : undefined}
+      onPointerDown={canDelete ? handleDown : canEdit ? handleDown : undefined}
+      onPointerUp={canDelete ? handleUp : canEdit ? handleUp : undefined}
+      onPointerLeave={canDelete ? handleUp : canEdit ? handleUp : undefined}
       className={`${styles.messageWrapper} ${message.is_from_operator ? styles.fromOperator : styles.fromUser} ${className || ""}`}
     >
       <MessageBubble isOperator={message.is_from_operator}>
@@ -43,6 +51,7 @@ const Message: React.FC<Props> = ({
           message={message}
           showConfirm={show}
           onConfirm={handleConfirmDelete}
+          onEdit={content => handleConfirmEdit(content)}
           onCancel={cancel}
         />
       </MessageBubble>

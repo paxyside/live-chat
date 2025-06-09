@@ -4,10 +4,14 @@ import handleReadMessage from "../handlers/handleReadMessage";
 import handleDeleteMessage from "../handlers/handleDeleteMessage";
 import handleSendMessage from "../handlers/handleSendMessage";
 import type {ChatMessage} from "@/types";
+import handleEditMessage from "@/handlers/handleEditMessage.ts";
+import handleTypingMessage from "@/handlers/handleTypingMessage.ts";
+import type {TypingMap} from "@/hooks/useChatApp.ts";
 
 interface UseChatHandlersProps {
   setChatId: React.Dispatch<React.SetStateAction<number | null>>;
   setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
+  setTyping: React.Dispatch<React.SetStateAction<TypingMap>>;
   wsRef: React.RefObject<WebSocket | null>;
   chatId: number | null;
   isOperator: boolean;
@@ -25,6 +29,13 @@ export default function useChatHandlers({
       handleOpenChat({id, setChatId, setMessages, wsRef});
     },
     [setChatId, setMessages, wsRef],
+  );
+
+  const onEditMessage = useCallback(
+    (chatId: number, messageId: number, content: string) => {
+      handleEditMessage({chatId, messageId, content, wsRef});
+    },
+    [wsRef],
   );
 
   const onReadMessage = useCallback(
@@ -48,5 +59,9 @@ export default function useChatHandlers({
     [chatId, isOperator, wsRef],
   );
 
-  return {onOpenChat, onReadMessage, onDeleteMessage, onSendMessage};
+  const onTyping = useCallback(() => {
+    handleTypingMessage({chatId, wsRef});
+  }, [chatId, wsRef]);
+
+  return {onOpenChat, onEditMessage, onReadMessage, onDeleteMessage, onSendMessage, onTyping};
 }

@@ -3,6 +3,7 @@ interface TelegramWebApp {
 }
 
 interface Window {
+  typingTimeout?: ReturnType<typeof setTimeout>;
   Telegram?: {
     WebApp?: TelegramWebApp;
   };

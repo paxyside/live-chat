@@ -6,6 +6,8 @@ import useInitialChatLoad from "./useInitialChatLoad";
 import useWebSocketConnection from "./useWebSocket";
 import useChatHandlers from "./useChatHandlers";
 
+export type TypingMap = Record<number, { user: boolean; operator: boolean }>;
+
 export default function useChatApp(wsUrl: string) {
   const [connected, setConnected] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
@@ -13,13 +15,15 @@ export default function useChatApp(wsUrl: string) {
   const [chats, setChats] = useState<ChatWithLastMessage[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [chatId, setChatId] = useState<number | null>(null);
+  const [typing, setTyping] = useState<TypingMap>({});
   const [error, setError] = useState("");
   const wsRef = useRef<WebSocket | null>(null);
 
-  const {onOpenChat, onReadMessage, onDeleteMessage, onSendMessage} =
+  const {onOpenChat, onEditMessage, onReadMessage, onDeleteMessage, onSendMessage, onTyping} =
     useChatHandlers({
       setChatId,
       setMessages,
+      setTyping,
       wsRef,
       chatId,
       isOperator,
@@ -38,6 +42,7 @@ export default function useChatApp(wsUrl: string) {
     setError,
     wsRef,
     onReadMessage,
+    setTyping,
   });
 
   useInitialChatLoad({
@@ -73,7 +78,11 @@ export default function useChatApp(wsUrl: string) {
     messages,
     onOpenChat,
     onSendMessage,
+    onEditMessage,
     onDeleteMessage,
+    typing,
+    setTyping,
+    onTyping,
     setChatId,
     setMessages,
   };

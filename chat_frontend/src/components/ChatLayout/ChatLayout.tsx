@@ -14,6 +14,9 @@ interface ChatRootProps {
   handleOpenChat: (id: number) => void;
   handleSendMessage: (msg: string) => void;
   handleDeleteMessage: (chatId: number, id: number) => void;
+  handleEditMessage: (chatId: number, messageId: number, content: string) => void;
+  typingMessage?: Record<number, { user: boolean; operator: boolean }>;
+  handleTyping?: () => void;
 }
 
 const ChatLayout: React.FC<ChatRootProps> = ({
@@ -27,6 +30,9 @@ const ChatLayout: React.FC<ChatRootProps> = ({
                                                handleOpenChat,
                                                handleSendMessage,
                                                handleDeleteMessage,
+                                               handleEditMessage,
+                                               typingMessage,
+                                               handleTyping
                                              }) => {
   if (!connected || !authenticated) {
     return <AuthLayout error={error}/>;
@@ -42,6 +48,9 @@ const ChatLayout: React.FC<ChatRootProps> = ({
       onOpenChat={isOperator ? handleOpenChat : undefined}
       onSendMessage={handleSendMessage}
       onDeleteMessage={handleDeleteMessage}
+      onEditMessage={handleEditMessage}
+      typing={typingMessage}
+      onTyping={handleTyping}
     />
   );
 };

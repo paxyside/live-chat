@@ -14,6 +14,9 @@ interface ChatWindowProps {
   isOperator: boolean;
   onOpenChat: (id: number) => void;
   onDeleteMessage?: (chatId: number, id: number) => void;
+  onEditMessage?: (chatId: number, messageId: number, content: string) => void;
+  typing?: Record<number, { user: boolean; operator: boolean }>;
+  onTyping?: () => void;
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({
@@ -24,6 +27,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                                                  isOperator,
                                                  onOpenChat,
                                                  onDeleteMessage,
+                                                 onEditMessage,
+                                                 typing,
+                                                 onTyping
                                                }) => {
   const [input, setInput] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -34,6 +40,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       setInput("");
     }
   };
+
+  const chatTyping = chatId && typing ? typing[chatId] : { user: false, operator: false };
 
   return (
     <div className={styles.window}>
@@ -82,10 +90,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           messages={messages}
           isOperator={isOperator}
           onDelete={onDeleteMessage}
+          onEdit={onEditMessage}
         />
       </div>
 
-      <MessageInput input={input} setInput={setInput} onSend={handleSend}/>
+      <MessageInput
+        input={input}
+        setInput={setInput}
+        onSend={handleSend}
+        typing={chatTyping}
+        onTyping={onTyping || (() => {})}
+        isOperator={isOperator}
+      />
     </div>
   );
 };

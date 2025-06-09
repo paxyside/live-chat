@@ -32,6 +32,7 @@ export interface ChatMessage {
   content: string;
   is_from_operator: boolean;
   created_at: string;
+  edited_at?: string;
   deleted_at?: string;
   read_by_user_at?: string;
   read_by_operator_at?: string;

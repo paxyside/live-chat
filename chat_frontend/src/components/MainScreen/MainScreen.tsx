@@ -20,6 +20,9 @@ function MainScreen(): JSX.Element {
         handleOpenChat={chatApp.onOpenChat}
         handleSendMessage={chatApp.onSendMessage}
         handleDeleteMessage={chatApp.onDeleteMessage}
+        handleEditMessage={chatApp.onEditMessage}
+        typingMessage={chatApp.typing}
+        handleTyping={chatApp.onTyping}
       />
     </div>
   );

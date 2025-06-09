@@ -93,40 +93,59 @@
     margin-left: 6px;
 }
 
-.deleteMessagePopup {
+.dropdown {
     position: absolute;
-    left: 0;
     top: 100%;
-    margin-top: 2px;
-    min-width: 80px;
-    max-width: 140px;
+    right: 0;
+    min-width: 110px;
+    background: var(--bg-main);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+    padding: 8px 0;
+    z-index: 100;
+    animation: dropdown-fade-in 0.18s;
+    display: flex;
+    flex-direction: column;
+    /* Адаптация под ширину сообщения */
     width: max-content;
-    background: rgba(40, 44, 52, 0.97);
-    color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.10);
-    padding: 6px 10px;
-    font-size: 13px;
-    font-weight: 500;
-    z-index: 20;
-    transition: background var(--transition), box-shadow var(--transition);
+    max-width: 95vw;
 }
 
-.deleteMessagePopupButton {
+.editedMark {
+    display: block;
+    font-size: 0.85em;
+    color: var(--muted-text);
+    margin-top: 2px;
+    opacity: 0.7;
+}
+
+@keyframes dropdown-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.menuItem {
+    width: 100%;
     background: none;
-    color: var(--error-text);
     border: none;
-    border-radius: 4px;
-    padding: 6px 0;
-    font-size: 13px;
-    font-weight: 600;
+    color: var(--muted-text);
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 1rem;
     cursor: pointer;
-    transition: background var(--transition), color var(--transition);
+    transition: background 0.13s, color 0.13s;
+    border-radius: 8px;
 }
 
-.deleteMessagePopupButton:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff;
+.menuItem:hover {
+    background: var(--muted-dark);
+    color: var(--text-main);
 }
 
 @media (max-width: 600px) {

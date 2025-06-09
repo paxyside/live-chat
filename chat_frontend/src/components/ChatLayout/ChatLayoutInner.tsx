@@ -14,6 +14,9 @@ interface ChatLayoutInnerProps {
   onOpenChat?: (id: number) => void;
   onSendMessage: (msg: string) => void;
   onDeleteMessage: (chatId: number, id: number) => void;
+  onEditMessage: (chatId: number, messageId: number, content: string) => void;
+  typing?: Record<number, { user: boolean; operator: boolean }>;
+  onTyping?: () => void;
 }
 
 const ChatLayoutInner: React.FC<ChatLayoutInnerProps> = ({
@@ -26,6 +29,9 @@ const ChatLayoutInner: React.FC<ChatLayoutInnerProps> = ({
                                                            },
                                                            onSendMessage,
                                                            onDeleteMessage,
+                                                           onEditMessage,
+                                                           typing,
+                                                           onTyping
                                                          }) => {
   return (
     <div className={styles.layout}>
@@ -39,6 +45,9 @@ const ChatLayoutInner: React.FC<ChatLayoutInnerProps> = ({
           onOpenChat={onOpenChat}
           onSendMessage={onSendMessage}
           onDeleteMessage={onDeleteMessage}
+          onEditMessage={onEditMessage}
+          typing={typing}
+          onTyping={onTyping}
         />
       </main>
     </div>
