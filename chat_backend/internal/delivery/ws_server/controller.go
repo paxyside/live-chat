@@ -156,6 +156,10 @@ func (c *WsController) HandleMessage(ctx context.Context, client *Client, raw []
 		return c.exec(client, OpMessageSendError, func() error {
 			return c.sendMessage(ctx, client, msg.Data)
 		})
+	case OpMessageEdit:
+		return c.exec(client, OpMessageEditError, func() error {
+			return c.messageEdit(ctx, client, msg.Data)
+		})
 	case OpMessageRead:
 		return c.exec(client, OpMessageReadError, func() error {
 			return c.messageRead(ctx, client, msg.Data)
@@ -163,6 +167,10 @@ func (c *WsController) HandleMessage(ctx context.Context, client *Client, raw []
 	case OpMessageDelete:
 		return c.exec(client, OpMessageDeleteError, func() error {
 			return c.messageDelete(ctx, client, msg.Data)
+		})
+	case OpMessageTyping:
+		return c.exec(client, OpMessageTypingError, func() error {
+			return c.messageTyping(client, msg.Data)
 		})
 	default:
 		if err := c.sendErrorMessage(client, OpUnknownOp, errors.New("unknown operation: "+msg.Op)); err != nil {

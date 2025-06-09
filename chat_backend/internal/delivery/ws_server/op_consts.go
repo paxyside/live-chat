@@ -23,9 +23,17 @@ const (
 	OpMessageReadSuccess = "message_read_success"
 	OpMessageReadError   = "message_read_error"
 
+	OpMessageEdit        = "message_edit"
+	OpMessageEditSuccess = "message_edit_success"
+	OpMessageEditError   = "message_edit_error"
+
 	OpMessageDelete        = "message_delete"
 	OpMessageDeleteSuccess = "message_delete_success"
 	OpMessageDeleteError   = "message_delete_error"
+
+	OpMessageTyping        = "message_typing"
+	OpMessageTypingSuccess = "message_typing_success"
+	OpMessageTypingError   = "message_typing_error"
 
 	OpUnknownOp = "unknown_op"
 )

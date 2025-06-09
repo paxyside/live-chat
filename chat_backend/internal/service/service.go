@@ -47,6 +47,10 @@ func (s *Service) GetMessagesByChatID(ctx context.Context, chatID int64) ([]doma
 	return s.repo.GetMessagesByChatID(ctx, chatID)
 }
 
+func (s *Service) EditMessage(ctx context.Context, messageID int64, content string) (*domain.Message, error) {
+	return s.repo.EditMessage(ctx, messageID, content)
+}
+
 func (s *Service) MarkMessageAsRead(ctx context.Context, messageID int64, isOperator bool) (*domain.Message, error) {
 	return s.repo.MarkMessageAsRead(ctx, messageID, isOperator)
 }

@@ -25,6 +25,7 @@ CREATE TABLE messages
     content             TEXT,
     is_from_operator    BOOLEAN     NOT NULL,
     created_at          timestamptz NOT NULL DEFAULT now(),
+    edited_at           timestamptz NULL,
     deleted_at          timestamptz NULL,
     read_by_user_at     timestamptz NULL,
     read_by_operator_at timestamptz NULL
@@ -37,6 +38,7 @@ CREATE INDEX idx_messages_chat_id_created_at ON messages(chat_id, created_at DES
 CREATE INDEX idx_messages_read_by_user_at ON messages(read_by_user_at);
 CREATE INDEX idx_messages_read_by_operator_at ON messages(read_by_operator_at);
 CREATE INDEX idx_messages_deleted_at ON messages(deleted_at);
+CREATE INDEX idx_messages_edited_at ON messages(edited_at);
 CREATE INDEX idx_messages_is_from_operator ON messages(is_from_operator);
 
 COMMIT;

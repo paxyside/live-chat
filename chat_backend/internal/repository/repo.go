@@ -118,7 +118,8 @@ func (r *Repo) ListAllChats(ctx context.Context) ([]domain.ChatWithLastMessage, 
 		  CASE WHEN m.id IS NOT NULL THEN row_to_json(m.*) ELSE NULL END AS last_message
 		FROM chats c
 		LEFT JOIN LATERAL (
-		  SELECT id, chat_id, sender_tg_id, content, is_from_operator, created_at, deleted_at, read_by_user_at, read_by_operator_at
+		  SELECT id, chat_id, sender_tg_id, content, is_from_operator, created_at,
+		         edited_at, deleted_at, read_by_user_at, read_by_operator_at
 		  FROM messages
 		  WHERE messages.chat_id = c.id
 		  ORDER BY messages.created_at DESC
@@ -189,7 +190,7 @@ func (r *Repo) CreateMessage(
 		RETURNING
 		    id, chat_id, sender_tg_id,
 		    content, is_from_operator,
-		    created_at, deleted_at,
+		    created_at, edited_at, deleted_at,
 		    read_by_user_at, read_by_operator_at
 	`
 
@@ -208,7 +209,7 @@ func (r *Repo) CreateMessage(
 
 func (r *Repo) GetMessagesByChatID(ctx context.Context, chatID int64) ([]domain.Message, error) {
 	query := `
-		SELECT id, chat_id, sender_tg_id, content, is_from_operator, created_at, deleted_at, read_by_operator_at, read_by_user_at
+		SELECT id, chat_id, sender_tg_id, content, is_from_operator, created_at,edited_at, deleted_at, read_by_operator_at, read_by_user_at
 		FROM messages
 		WHERE chat_id = $1
 		ORDER BY created_at ASC
@@ -225,6 +226,26 @@ func (r *Repo) GetMessagesByChatID(ctx context.Context, chatID int64) ([]domain.
 	}
 
 	return messages, nil
+}
+
+func (r *Repo) EditMessage(ctx context.Context, messageID int64, content string) (*domain.Message, error) {
+	query := `UPDATE messages SET content = $1, edited_at = $2 WHERE id = $3 AND deleted_at IS NULL RETURNING
+		    id, chat_id, sender_tg_id,
+		    content, is_from_operator,
+		    created_at, edited_at, deleted_at,
+		    read_by_user_at, read_by_operator_at`
+
+	row, err := r.db.Query(ctx, query, content, time.Now(), messageID)
+	if err != nil {
+		return nil, errors.Wrap(err, "r.db.Query")
+	}
+
+	msg, err := pgx.CollectOneRow[domain.Message](row, pgx.RowToStructByName[domain.Message])
+	if err != nil {
+		return nil, errors.Wrap(err, "pgx.CollectOneRow")
+	}
+
+	return &msg, nil
 }
 
 func (r *Repo) MarkMessageAsRead(ctx context.Context, messageID int64, isOperator bool) (*domain.Message, error) {

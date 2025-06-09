@@ -31,6 +31,7 @@ type Message struct {
 	Content          string     `json:"content"`
 	IsFromOperator   bool       `json:"is_from_operator"`
 	CreatedAt        time.Time  `json:"created_at"`
+	EditedAt         *time.Time `json:"edited_at"`
 	DeletedAt        *time.Time `json:"deleted_at"`
 	ReadByUserAt     *time.Time `json:"read_by_user_at"`
 	ReadByOperatorAt *time.Time `json:"read_by_operator_at"`

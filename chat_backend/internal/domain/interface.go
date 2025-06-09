@@ -17,6 +17,7 @@ type Repository interface {
 		isFromOperator bool,
 	) (*Message, error)
 	GetMessagesByChatID(ctx context.Context, chatID int64) ([]Message, error)
+	EditMessage(ctx context.Context, messageID int64, content string) (*Message, error)
 	MarkMessageAsRead(ctx context.Context, messageID int64, isOperator bool) (*Message, error)
 	MarkMessageAsDeleted(ctx context.Context, messageID int64) (*Message, error)
 }
@@ -36,6 +37,7 @@ type Service interface {
 		isFromOperator bool,
 	) (*Message, error)
 	GetMessagesByChatID(ctx context.Context, chatID int64) ([]Message, error)
+	EditMessage(ctx context.Context, messageID int64, content string) (*Message, error)
 	MarkMessageAsRead(ctx context.Context, messageID int64, isOperator bool) (*Message, error)
 	MarkMessageAsDeleted(ctx context.Context, messageID int64) (*Message, error)
 }
