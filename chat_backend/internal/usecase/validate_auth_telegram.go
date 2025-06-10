@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 
 	"emperror.dev/errors"
@@ -12,7 +13,7 @@ import (
 func ValidateAuthTelegram(initData string) error {
 	token := viper.GetString("app.telegram.bot_token")
 	expIn := viper.GetDuration("app.telegram.exp_in")
-
+	fmt.Println(initData)
 	if err := initdata.Validate(initData, token, expIn); err != nil {
 		return errors.Wrap(err, "initdata.Validate")
 	}
