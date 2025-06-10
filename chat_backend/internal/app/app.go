@@ -49,7 +49,7 @@ func NewApp(l logger.Loggerer) (*App, error) {
 	httpController := http_server.NewHttpController(svc)
 	httpRouter := gin.New()
 	httpRouter.Use(cors.New(cors.Config{
-		AllowOrigins:     viper.GetStringSlice("app.server.http.allow_origins"),
+		AllowOrigins:     viper.GetStringSlice("app.server.http.allowed_origins"),
 		AllowMethods:     []string{"POST", "GET", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
 		ExposeHeaders:    []string{"Content-Length"},
