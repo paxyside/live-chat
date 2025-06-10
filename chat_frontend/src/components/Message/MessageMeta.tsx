@@ -8,27 +8,22 @@ interface MessageMetaProps {
   readByUserAt?: string;
   readByOperatorAt?: string;
   deletedAt?: string;
+  editedAt?: string;
 }
 
 const MessageMeta: React.FC<MessageMetaProps> = memo(
-  ({createdAt, readByOperatorAt, readByUserAt, deletedAt}) => {
+  ({createdAt, readByOperatorAt, readByUserAt, deletedAt, editedAt}) => {
     if (deletedAt) return null;
-
-    let readStatusClass = "";
-    if (readByOperatorAt) {
-      readStatusClass = styles.fromOperatorMetaIcon;
-    } else if (readByUserAt) {
-      readStatusClass = styles.fromUserMetaIcon;
-    }
 
     return (
       <div className={styles.messageMeta}>
         <span className={styles.metaTime}>{formatTime(createdAt)}</span>
         {(readByOperatorAt || readByUserAt) && (
-          <span className={readStatusClass}>
-                <Check size={12}/>
+          <span className={styles.metaReadIcon}>
+               | <Check size={10}/>
               </span>
         )}
+        {editedAt && <span className={styles.editedMark}>| Edited</span>}
       </div>
     );
   },

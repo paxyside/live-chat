@@ -1,6 +1,6 @@
 import React from "react";
 import {SendHorizonal} from "lucide-react";
-import styles from "./MessageInput.module.css";
+import styles from "./styles/SendButton.module.css";
 import clsx from "clsx";
 
 interface SendButtonProps {

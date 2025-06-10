@@ -1,5 +1,5 @@
 import React from "react";
-import type {ChatMessage, ChatWithLastMessage} from "@/types";
+import type {ChatMessage, ChatWithLastMessage, UploadedFile} from "@/types";
 import AuthLayout from "./AuthLayout";
 import ChatLayoutInner from "./ChatLayoutInner";
 
@@ -12,7 +12,8 @@ interface ChatRootProps {
   chats: ChatWithLastMessage[];
   messages: ChatMessage[];
   handleOpenChat: (id: number) => void;
-  handleSendMessage: (msg: string) => void;
+  handleFileInputChange: (e: React.ChangeEvent<HTMLInputElement> | File) => Promise<UploadedFile | null>;
+  handleSendMessage: (msg: string, file_url: string) => void;
   handleDeleteMessage: (chatId: number, id: number) => void;
   handleEditMessage: (chatId: number, messageId: number, content: string) => void;
   typingMessage?: Record<number, { user: boolean; operator: boolean }>;
@@ -28,6 +29,7 @@ const ChatLayout: React.FC<ChatRootProps> = ({
                                                chats,
                                                messages,
                                                handleOpenChat,
+                                               handleFileInputChange,
                                                handleSendMessage,
                                                handleDeleteMessage,
                                                handleEditMessage,
@@ -46,6 +48,7 @@ const ChatLayout: React.FC<ChatRootProps> = ({
       chats={isOperator ? chats : []}
       messages={messages}
       onOpenChat={isOperator ? handleOpenChat : undefined}
+      onFileInputChange={handleFileInputChange}
       onSendMessage={handleSendMessage}
       onDeleteMessage={handleDeleteMessage}
       onEditMessage={handleEditMessage}

@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./Message.module.css";
+import {BadgeCheck, BadgeX} from "lucide-react";
 
 interface MessageEditInputProps {
   value: string;
@@ -9,7 +10,7 @@ interface MessageEditInputProps {
 }
 
 const MessageEditInput: React.FC<MessageEditInputProps> = ({value, onChange, onSave, onCancel}) => (
-  <div className={styles.editContainer}>
+  <div className={styles.editInputWrapper}>
     <input
       className={styles.editInput}
       value={value}
@@ -20,8 +21,12 @@ const MessageEditInput: React.FC<MessageEditInputProps> = ({value, onChange, onS
       }}
       autoFocus
     />
-    <button className={styles.editSaveBtn} onClick={onSave}>Сохранить</button>
-    <button className={styles.editCancelBtn} onClick={onCancel}>Отмена</button>
+    <button className={styles.editSaveBtn} onClick={onSave}>
+      <BadgeCheck size={4}/>
+    </button>
+    <button className={styles.editCancelBtn} onClick={onCancel}>
+      <BadgeX size={4}/>
+    </button>
   </div>
 );
 

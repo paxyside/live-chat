@@ -6,6 +6,7 @@ import handleSendMessage from "../handlers/handleSendMessage";
 import type {ChatMessage, TypingMap} from "@/types";
 import handleEditMessage from "@/handlers/handleEditMessage.ts";
 import handleTypingMessage from "@/handlers/handleTypingMessage.ts";
+import {handleFileChange} from "@/handlers/handleFileChange.ts";
 
 interface UseChatHandlersProps {
   setChatId: React.Dispatch<React.SetStateAction<number | null>>;
@@ -51,16 +52,20 @@ export default function useChatHandlers({
     [wsRef],
   );
 
+  const onFileInputChange = async (e: React.ChangeEvent<HTMLInputElement> | File) => {
+    return await handleFileChange(e);
+  };
+
   const onSendMessage = useCallback(
-    (text: string) => {
-      handleSendMessage({text, chatId, isOperator, wsRef});
+    (text: string, file_url: string) => {
+      handleSendMessage({text, chatId, isOperator, file_url, wsRef});
     },
-    [chatId, isOperator, wsRef],
+    [chatId, isOperator, wsRef]
   );
 
   const onTyping = useCallback(() => {
     handleTypingMessage({chatId, wsRef});
   }, [chatId, wsRef]);
 
-  return {onOpenChat, onEditMessage, onReadMessage, onDeleteMessage, onSendMessage, onTyping};
+  return {onOpenChat, onEditMessage, onReadMessage, onDeleteMessage, onFileInputChange, onSendMessage, onTyping};
 }

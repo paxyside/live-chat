@@ -18,6 +18,7 @@ function MainScreen(): JSX.Element {
         chats={chatApp.chats}
         messages={chatApp.messages}
         handleOpenChat={chatApp.onOpenChat}
+        handleFileInputChange={chatApp.onFileInputChange}
         handleSendMessage={chatApp.onSendMessage}
         handleDeleteMessage={chatApp.onDeleteMessage}
         handleEditMessage={chatApp.onEditMessage}

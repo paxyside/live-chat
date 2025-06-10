@@ -17,7 +17,7 @@ export default function useChatApp(wsUrl: string) {
   const [error, setError] = useState("");
   const wsRef = useRef<WebSocket | null>(null);
 
-  const {onOpenChat, onEditMessage, onReadMessage, onDeleteMessage, onSendMessage, onTyping} =
+  const {onOpenChat, onEditMessage, onReadMessage, onDeleteMessage, onFileInputChange, onSendMessage, onTyping} =
     useChatHandlers({
       setChatId,
       setMessages,
@@ -83,5 +83,6 @@ export default function useChatApp(wsUrl: string) {
     onTyping,
     setChatId,
     setMessages,
+    onFileInputChange,
   };
 }

@@ -1,0 +1,34 @@
+.sendButton {
+    height: 44px;
+    width: 44px;
+    background: var(--muted-text);
+    border: none;
+    border-radius: 50%;
+    color: var(--bg-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition), box-shadow var(--transition);
+    box-shadow: var(--shadow);
+}
+
+.sendButton:disabled {
+    background: var(--muted-dark);
+    color: var(--bg-secondary);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.sendButton:active:not(:disabled),
+.sendButton:focus:not(:disabled) {
+    background: var(--accent-dark);
+    outline: none;
+}
+
+@media (max-width: 600px) {
+    .sendButton {
+        height: 42px;
+        width: 42px;
+    }
+}

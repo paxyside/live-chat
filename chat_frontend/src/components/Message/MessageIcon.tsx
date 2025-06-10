@@ -8,11 +8,8 @@ interface MessageIconProps {
 
 const MessageIcon: React.FC<MessageIconProps> = memo(({isOperator}) => {
   const Icon = isOperator ? UserRoundCog : User;
-  const iconColor = isOperator
-    ? "var(--message-operator)"
-    : "var(--message-user)";
-  return <Icon className={`${styles.messageIcon} ${isOperator ? styles.fromOperatorIcon : ""}`}
-               style={{color: iconColor}}/>;
+
+  return <Icon className={`${styles.fromUserIcon} ${isOperator ? styles.fromOperatorIcon : ""}`}/>;
 });
 
 export default MessageIcon;

@@ -1,17 +1,18 @@
-import React, {useState} from "react";
+import React, {useCallback, useState} from "react";
 import MessageList from "../MessageList/MessageList.tsx";
 import MessageInput from "../MessageInput/MessageInput.tsx";
 import ChatWindowSidebar from "./ChatWindowSidebar";
 import ChatWindowSidebarOverlay from "./ChatWindowSidebarOverlay";
 import ChatWindowHeader from "./ChatWindowHeader";
-import type {ChatMessage, ChatWithLastMessage} from "@/types";
+import type {ChatMessage, ChatWithLastMessage, UploadedFile} from "@/types";
 import styles from "./ChatWindow.module.css";
 
 interface ChatWindowProps {
   chatId: number | null;
   messages: ChatMessage[];
   chats: ChatWithLastMessage[] | [];
-  onSendMessage: (message: string) => void;
+  onFileInputChange: (e: React.ChangeEvent<HTMLInputElement> | File) => Promise<UploadedFile | null>;
+  onSendMessage: (message: string, file_url: string) => void;
   isOperator: boolean;
   onOpenChat: (id: number) => void;
   onDeleteMessage?: (chatId: number, id: number) => void;
@@ -24,6 +25,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                                                  chatId,
                                                  messages,
                                                  chats,
+                                                 onFileInputChange,
                                                  onSendMessage,
                                                  isOperator,
                                                  onOpenChat,
@@ -34,15 +36,25 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                                                }) => {
   const [input, setInput] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [pendingFile, setPendingFile] = useState<UploadedFile | null>(null);
 
-  const handleSend = () => {
-    if (input.trim()) {
-      onSendMessage(input.trim());
-      setInput("");
+  const handleFileInputChange = async (
+    e: React.ChangeEvent<HTMLInputElement> | File
+  ): Promise<UploadedFile | null> => {
+    const result = await onFileInputChange(e);
+    if (result && result.file_url) {
+      setPendingFile(result);
     }
+    return result;
   };
 
-  const chatTyping = chatId && typing ? typing[chatId] : { user: false, operator: false };
+  const handleSend = useCallback((text: string) => {
+    onSendMessage(text, pendingFile?.file_url || '');
+    setPendingFile(null);
+    setInput('');
+  }, [onSendMessage, pendingFile]);
+
+  const chatTyping = chatId && typing ? typing[chatId] : {user: false, operator: false};
 
   return (
     <div className={styles.window}>
@@ -60,7 +72,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
               sidebarOpen={sidebarOpen}
             />
           )}
-          <ChatWindowHeader onOpenSidebar={() => setSidebarOpen(true)} />
+          <ChatWindowHeader onOpenSidebar={() => setSidebarOpen(true)}/>
         </>
       )}
 
@@ -77,9 +89,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       <MessageInput
         input={input}
         setInput={setInput}
+        onFileInputChange={handleFileInputChange}
         onSend={handleSend}
         typing={chatTyping}
-        onTyping={onTyping || (() => {})}
+        onTyping={onTyping ?? (() => {
+        })}
         isOperator={isOperator}
       />
     </div>

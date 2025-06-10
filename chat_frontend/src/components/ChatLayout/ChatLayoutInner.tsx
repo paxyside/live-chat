@@ -1,7 +1,7 @@
 // ChatLayoutInner.tsx
 import React from "react";
 import styles from "./ChatLayout.module.css";
-import type {ChatMessage, ChatWithLastMessage} from "@/types";
+import type {ChatMessage, ChatWithLastMessage, UploadedFile} from "@/types";
 import {ErrorMessage} from "@/components/ErrorMessage";
 import {ChatWindow} from "@/components/ChatWindow";
 
@@ -12,7 +12,8 @@ interface ChatLayoutInnerProps {
   chats?: ChatWithLastMessage[];
   messages: ChatMessage[];
   onOpenChat?: (id: number) => void;
-  onSendMessage: (msg: string) => void;
+  onFileInputChange: (e: React.ChangeEvent<HTMLInputElement> | File) => Promise<UploadedFile | null>;
+  onSendMessage: (msg: string, file_url: string) => void;
   onDeleteMessage: (chatId: number, id: number) => void;
   onEditMessage: (chatId: number, messageId: number, content: string) => void;
   typing?: Record<number, { user: boolean; operator: boolean }>;
@@ -27,6 +28,7 @@ const ChatLayoutInner: React.FC<ChatLayoutInnerProps> = ({
                                                            messages,
                                                            onOpenChat = () => {
                                                            },
+                                                           onFileInputChange,
                                                            onSendMessage,
                                                            onDeleteMessage,
                                                            onEditMessage,
@@ -43,6 +45,7 @@ const ChatLayoutInner: React.FC<ChatLayoutInnerProps> = ({
           messages={messages}
           isOperator={isOperator}
           onOpenChat={onOpenChat}
+          onFileInputChange={onFileInputChange}
           onSendMessage={onSendMessage}
           onDeleteMessage={onDeleteMessage}
           onEditMessage={onEditMessage}

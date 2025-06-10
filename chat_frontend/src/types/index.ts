@@ -31,6 +31,7 @@ export interface ChatMessage {
   sender_tg_id: number;
   content: string;
   is_from_operator: boolean;
+  file_url: string;
   created_at: string;
   edited_at?: string;
   deleted_at?: string;
@@ -44,3 +45,9 @@ export interface ChatWithLastMessage {
 }
 
 export type TypingMap = Record<number, { user: boolean; operator: boolean }>;
+
+export type UploadedFile = {
+  file_url: string;
+  filename: string;
+  mediaType: string;
+};
