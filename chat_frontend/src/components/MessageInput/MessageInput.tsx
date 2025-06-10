@@ -80,6 +80,7 @@ const MessageInput = ({
 
   return (
     <div className={styles.messageInput}>
+      <TypingIndicator show={showTyping} isOperator={isOperator}/>
       <MessageInputPreview
         file={pendingFile}
         onRemove={handleRemoveFile}
@@ -113,7 +114,6 @@ const MessageInput = ({
         disabled={fileLoading || (!input.trim() && !pendingFile)}
         onClick={handleSend}
       />
-      <TypingIndicator show={showTyping} isOperator={isOperator}/>
     </div>
   );
 };

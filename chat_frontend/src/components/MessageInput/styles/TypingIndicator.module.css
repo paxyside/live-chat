@@ -1,4 +1,5 @@
 .typingIndicator {
+    position: absolute;
     margin-bottom: 6px;
     color: #4b9cff;
     background: rgba(75, 156, 255, 0.08);
