@@ -215,6 +215,7 @@
 
 .menuItem {
     width: 100%;
+    white-space: nowrap;
     background: none;
     border: none;
     color: var(--muted-text);
