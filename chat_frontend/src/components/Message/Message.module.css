@@ -19,6 +19,8 @@
     align-items: flex-end;
     background: var(--bg-secondary);
     border-radius: var(--border-radius);
+    user-select: none;
+    -webkit-user-select: none;
     padding: 10px 16px;
     max-width: 80vw;
     gap: 8px;
