@@ -16,6 +16,7 @@ services:
       - ./chat_backend/migrations:/app/migrations/
       - ./chat_backend/config.yaml:/app/config.yaml
       - ./chat_backend/.env:/app/.env
+      - ./chat_backend/uploads:/app/uploads
 
   database:
     image: postgres:17.4-alpine
