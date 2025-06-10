@@ -43,19 +43,10 @@ const Message: React.FC<Props> = ({
       onPointerDown={canDelete ? handleDown : canEdit ? handleDown : undefined}
       onPointerUp={canDelete ? handleUp : canEdit ? handleUp : undefined}
       onPointerLeave={canDelete ? handleUp : canEdit ? handleUp : undefined}
+      onTouchStart={canDelete ? handleDown : canEdit ? handleDown : undefined}
+      onTouchEnd={canDelete ? handleUp : canEdit ? handleUp : undefined}
+      onTouchCancel={canDelete ? handleUp : canEdit ? handleUp : undefined}
       className={`${styles.messageWrapper} ${message.is_from_operator ? styles.fromOperator : styles.fromUser} ${className || ""}`}
-      onTouchStart={e => {
-        handleDown();
-        e.preventDefault();
-      }}
-      onTouchEnd={e => {
-        handleUp();
-        e.preventDefault();
-      }}
-      onTouchCancel={e => {
-        handleUp();
-        e.preventDefault();
-      }}
     >
       <MessageBubble isOperator={message.is_from_operator}>
         <MessageIcon isOperator={message.is_from_operator}/>
