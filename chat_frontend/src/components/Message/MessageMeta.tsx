@@ -17,10 +17,10 @@ const MessageMeta: React.FC<MessageMetaProps> = memo(
 
     return (
       <div className={styles.messageMeta}>
-        <span className={styles.metaTime}>{formatTime(createdAt)}</span>
+        <span className={styles.metaTime}>{formatTime(createdAt)} |</span>
         {(readByOperatorAt || readByUserAt) && (
           <span className={styles.metaReadIcon}>
-               |  <Check size={12}/>
+               <Check size={12}/>
               </span>
         )}
         {editedAt && <span className={styles.editedMark}>| Edited</span>}
