@@ -24,21 +24,21 @@ const MessageDropDownMenu: React.FC<Props> = ({
         <button
           className={styles.menuItem}
           onClick={() => {
-            onConfirmEdit();
             onCancel();
+            setTimeout(() => onConfirmEdit(), 0);
           }}
         >
-          <Pencil size={16}/> Edit
+          <Pencil size={8}/> Edit
         </button>
       )}
       <button
         className={styles.menuItem}
         onClick={() => {
-          onConfirmDelete();
           onCancel();
+          setTimeout(() => onConfirmDelete(), 0);
         }}
       >
-        <Trash2 size={16}/> Delete
+        <Trash2 size={8}/> Delete
       </button>
     </div>
   );
