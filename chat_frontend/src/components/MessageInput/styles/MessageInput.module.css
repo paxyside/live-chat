@@ -8,6 +8,7 @@
     border-radius: 0 0 var(--border-radius) var(--border-radius);
     transition: background var(--transition);
     position: relative;
+    margin-top: 28px;
 }
 
 .previewContainer {
@@ -195,6 +196,11 @@
     border: none;
     cursor: pointer;
     color: var(--text-main);
+}
+
+.inputWrapper {
+    position: relative;
+    width: 100%;
 }
 
 @media (max-width: 600px) {

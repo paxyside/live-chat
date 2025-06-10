@@ -1,6 +1,12 @@
 .typingIndicator {
     position: absolute;
-    margin-bottom: 6px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
     color: #4b9cff;
     background: rgba(75, 156, 255, 0.08);
     border-radius: 12px;
@@ -8,7 +14,6 @@
     font-size: 14px;
     font-weight: 500;
     box-shadow: 0 2px 8px rgba(75, 156, 255, 0.07);
-    display: inline-block;
     animation: fadeInTyping 0.4s cubic-bezier(.4, 0, .2, 1);
     transition: background 0.2s, color 0.2s;
 }

@@ -79,41 +79,43 @@ const MessageInput = ({
   const showTyping = isOperator ? safeTyping.user : safeTyping.operator;
 
   return (
-    <div className={styles.messageInput}>
+    <div className={styles.inputWrapper}>
       <TypingIndicator show={showTyping} isOperator={isOperator}/>
-      <MessageInputPreview
-        file={pendingFile}
-        onRemove={handleRemoveFile}
-        loading={fileLoading}
-      />
-      <button
-        type="button"
-        className={styles.fileButton}
-        onClick={() => fileInputRef.current?.click()}
-        disabled={fileLoading}
-        title="Прикрепить файл"
-      >
-        <Paperclip size={20}/>
-      </button>
-      <input
-        type="file"
-        ref={fileInputRef}
-        accept="image/*,video/*,audio/*"
-        style={{display: "none"}}
-        onChange={handleInputFileChange}
-      />
-      <MessageInputField
-        value={input}
-        onChange={setInput}
-        onKeyDown={handleKeyDown}
-        onPaste={handlePaste}
-        disabled={fileLoading}
-        inputRef={textAreaRef}
-      />
-      <SendButton
-        disabled={fileLoading || (!input.trim() && !pendingFile)}
-        onClick={handleSend}
-      />
+      <div className={styles.messageInput}>
+        <MessageInputPreview
+          file={pendingFile}
+          onRemove={handleRemoveFile}
+          loading={fileLoading}
+        />
+        <button
+          type="button"
+          className={styles.fileButton}
+          onClick={() => fileInputRef.current?.click()}
+          disabled={fileLoading}
+          title="Прикрепить файл"
+        >
+          <Paperclip size={20}/>
+        </button>
+        <input
+          type="file"
+          ref={fileInputRef}
+          accept="image/*,video/*,audio/*"
+          style={{display: "none"}}
+          onChange={handleInputFileChange}
+        />
+        <MessageInputField
+          value={input}
+          onChange={setInput}
+          onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
+          disabled={fileLoading}
+          inputRef={textAreaRef}
+        />
+        <SendButton
+          disabled={fileLoading || (!input.trim() && !pendingFile)}
+          onClick={handleSend}
+        />
+      </div>
     </div>
   );
 };
