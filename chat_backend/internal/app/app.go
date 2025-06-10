@@ -6,6 +6,7 @@ import (
 	"chat_backend/infra/pg"
 	"chat_backend/internal/domain/infrastructure/postgres"
 	"chat_backend/internal/repository"
+	"github.com/gin-contrib/cors"
 
 	"emperror.dev/errors"
 
@@ -47,10 +48,19 @@ func NewApp(l logger.Loggerer) (*App, error) {
 
 	httpController := http_server.NewHttpController(svc)
 	httpRouter := gin.New()
+	httpRouter.Use(cors.New(cors.Config{
+		AllowOrigins:     viper.GetStringSlice("app.server.http.allow_origins"),
+		AllowMethods:     []string{"POST", "GET", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 	httpRouter.Use(gin.Recovery())
 	httpRouter.Use(delivery.LoggerMiddleware(l))
 
 	httpRouter.PATCH("/api/set-operator", httpController.SetOperator)
+	httpRouter.POST("/api/upload-file", httpController.UploadFile)
+	httpRouter.Static("/uploads", "./uploads")
 
 	httpAddr := fmt.Sprintf("%s:%s", viper.GetString("app.server.http.host"), viper.GetString("app.server.http.port"))
 	httpServer := &http.Server{

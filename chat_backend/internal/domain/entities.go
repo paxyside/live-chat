@@ -30,6 +30,7 @@ type Message struct {
 	SenderTgID       int64      `json:"sender_tg_id"`
 	Content          string     `json:"content"`
 	IsFromOperator   bool       `json:"is_from_operator"`
+	FileUrl          string     `json:"file_url"`
 	CreatedAt        time.Time  `json:"created_at"`
 	EditedAt         *time.Time `json:"edited_at"`
 	DeletedAt        *time.Time `json:"deleted_at"`

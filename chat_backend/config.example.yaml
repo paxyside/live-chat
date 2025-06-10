@@ -3,10 +3,12 @@ app:
     shutdown_timeout: 10s
 
     http:
+      origin: "http://localhost:8008"
       host: "0.0.0.0"
       port: "8008"
       read_timeout: 10s
       write_timeout: 20s
+      allowed_origins: ["http://localhost:8008", "www.livechatpaxy.ru", "livechatpaxy.ru"]
 
     ws:
       host: "0.0.0.0"

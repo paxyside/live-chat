@@ -23,13 +23,14 @@ func (c *WsController) sendMessage(ctx context.Context, cli *Client, raw json.Ra
 		ChatID     int64  `json:"chat_id"`
 		Content    string `json:"content"`
 		IsOperator bool   `json:"is_operator"`
+		FileUrl    string `json:"file_url"`
 	}{}
 
 	if err := json.Unmarshal(raw, &request); err != nil {
 		return errors.Wrap(err, "json.Unmarshal")
 	}
 
-	msg, err := c.svc.CreateMessage(ctx, request.ChatID, tgID, request.Content, request.IsOperator)
+	msg, err := c.svc.CreateMessage(ctx, request.ChatID, tgID, request.Content, request.IsOperator, request.FileUrl)
 	if err != nil {
 		return errors.Wrap(err, "c.svc.CreateMessage")
 	}

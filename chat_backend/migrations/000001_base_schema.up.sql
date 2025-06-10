@@ -24,6 +24,7 @@ CREATE TABLE messages
     sender_tg_id        BIGINT     NOT NULL REFERENCES users (tg_id) ON DELETE CASCADE,
     content             TEXT,
     is_from_operator    BOOLEAN     NOT NULL,
+    file_url            VARCHAR(256) NOT NULL DEFAULT '',
     created_at          timestamptz NOT NULL DEFAULT now(),
     edited_at           timestamptz NULL,
     deleted_at          timestamptz NULL,

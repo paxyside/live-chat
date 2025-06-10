@@ -15,6 +15,7 @@ type Repository interface {
 		senderTgID int64,
 		content string,
 		isFromOperator bool,
+		fileURL string,
 	) (*Message, error)
 	GetMessagesByChatID(ctx context.Context, chatID int64) ([]Message, error)
 	EditMessage(ctx context.Context, messageID int64, content string) (*Message, error)
@@ -35,6 +36,7 @@ type Service interface {
 		senderTgID int64,
 		content string,
 		isFromOperator bool,
+		fileURL string,
 	) (*Message, error)
 	GetMessagesByChatID(ctx context.Context, chatID int64) ([]Message, error)
 	EditMessage(ctx context.Context, messageID int64, content string) (*Message, error)

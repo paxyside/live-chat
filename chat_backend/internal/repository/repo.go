@@ -47,7 +47,7 @@ func (r *Repo) GetOrCreateUser(ctx context.Context, tgID int64, tgUsername *stri
 		insertQuery := `
 			INSERT INTO users (tg_id, tg_username)
 			VALUES ($1, $2)
-			RETURNING id, tg_id, tg_username, is_operator, created_at, updated_at
+			RETURNING *
 		`
 
 		row, err = tx.Query(ctx, insertQuery, tgID, tgUsername)
@@ -118,8 +118,7 @@ func (r *Repo) ListAllChats(ctx context.Context) ([]domain.ChatWithLastMessage, 
 		  CASE WHEN m.id IS NOT NULL THEN row_to_json(m.*) ELSE NULL END AS last_message
 		FROM chats c
 		LEFT JOIN LATERAL (
-		  SELECT id, chat_id, sender_tg_id, content, is_from_operator, created_at,
-		         edited_at, deleted_at, read_by_user_at, read_by_operator_at
+		  SELECT *
 		  FROM messages
 		  WHERE messages.chat_id = c.id
 		  ORDER BY messages.created_at DESC
@@ -182,19 +181,15 @@ func (r *Repo) GetChatByID(ctx context.Context, id int64) (*domain.Chat, error) 
 // --- MESSAGES ---
 
 func (r *Repo) CreateMessage(
-	ctx context.Context, chatID int64, senderTgID int64, content string, isFromOperator bool,
+	ctx context.Context, chatID int64, senderTgID int64, content string, isFromOperator bool, fileURL string,
 ) (*domain.Message, error) {
 	query := `
-		INSERT INTO messages (chat_id, sender_tg_id, content, is_from_operator, created_at)
-		VALUES ($1, $2, $3, $4, $5)
-		RETURNING
-		    id, chat_id, sender_tg_id,
-		    content, is_from_operator,
-		    created_at, edited_at, deleted_at,
-		    read_by_user_at, read_by_operator_at
+		INSERT INTO messages (chat_id, sender_tg_id, content, is_from_operator, file_url, created_at)
+		VALUES ($1, $2, $3, $4, $5, $6)
+		RETURNING *
 	`
 
-	row, err := r.db.Query(ctx, query, chatID, senderTgID, content, isFromOperator, time.Now())
+	row, err := r.db.Query(ctx, query, chatID, senderTgID, content, isFromOperator, fileURL, time.Now())
 	if err != nil {
 		return nil, errors.Wrap(err, "r.db.Query")
 	}
@@ -208,12 +203,7 @@ func (r *Repo) CreateMessage(
 }
 
 func (r *Repo) GetMessagesByChatID(ctx context.Context, chatID int64) ([]domain.Message, error) {
-	query := `
-		SELECT id, chat_id, sender_tg_id, content, is_from_operator, created_at,edited_at, deleted_at, read_by_operator_at, read_by_user_at
-		FROM messages
-		WHERE chat_id = $1
-		ORDER BY created_at ASC
-	`
+	query := `SELECT * FROM messages WHERE chat_id = $1 ORDER BY created_at ASC`
 
 	rows, err := r.db.Query(ctx, query, chatID)
 	if err != nil {
@@ -229,11 +219,7 @@ func (r *Repo) GetMessagesByChatID(ctx context.Context, chatID int64) ([]domain.
 }
 
 func (r *Repo) EditMessage(ctx context.Context, messageID int64, content string) (*domain.Message, error) {
-	query := `UPDATE messages SET content = $1, edited_at = $2 WHERE id = $3 AND deleted_at IS NULL RETURNING
-		    id, chat_id, sender_tg_id,
-		    content, is_from_operator,
-		    created_at, edited_at, deleted_at,
-		    read_by_user_at, read_by_operator_at`
+	query := `UPDATE messages SET content = $1, edited_at = $2 WHERE id = $3 AND deleted_at IS NULL RETURNING *`
 
 	row, err := r.db.Query(ctx, query, content, time.Now(), messageID)
 	if err != nil {
@@ -252,58 +238,28 @@ func (r *Repo) MarkMessageAsRead(ctx context.Context, messageID int64, isOperato
 	var query string
 
 	if isOperator {
-		query = `UPDATE messages SET read_by_operator_at = $1 WHERE id = $2 AND read_by_operator_at IS NULL`
+		query = `UPDATE messages SET read_by_operator_at = $1 WHERE id = $2 AND read_by_operator_at IS NULL RETURNING *`
 	} else {
-		query = `UPDATE messages SET read_by_user_at = $1 WHERE id = $2 AND read_by_user_at IS NULL`
+		query = `UPDATE messages SET read_by_user_at = $1 WHERE id = $2 AND read_by_user_at IS NULL RETURNING *`
 	}
 
-	res, err := r.db.Exec(ctx, query, time.Now(), messageID)
+	row, err := r.db.Query(ctx, query, time.Now(), messageID)
 	if err != nil {
-		return nil, errors.Wrap(err, "r.db.Exec")
-	}
-	if res.RowsAffected() == 0 {
-		msg, err := r.getMessageByID(ctx, messageID)
-		if err != nil {
-			if errors.Is(err, pgx.ErrNoRows) {
-				return nil, domain.ErrMessageNotFound
-			}
-
-			return nil, errors.Wrap(err, "getMessageByID")
-		}
-
-		return msg, nil
+		return nil, errors.Wrap(err, "r.db.Query")
 	}
 
-	return r.getMessageByID(ctx, messageID)
+	msg, err := pgx.CollectOneRow[domain.Message](row, pgx.RowToStructByName[domain.Message])
+	if err != nil {
+		return nil, errors.Wrap(err, "pgx.CollectOneRow")
+	}
+
+	return &msg, nil
 }
 
 func (r *Repo) MarkMessageAsDeleted(ctx context.Context, messageID int64) (*domain.Message, error) {
-	query := `UPDATE messages SET deleted_at = $1 WHERE id = $2 AND deleted_at IS NULL`
+	query := `UPDATE messages SET deleted_at = $1 WHERE id = $2 AND deleted_at IS NULL RETURNING *`
 
-	res, err := r.db.Exec(ctx, query, time.Now(), messageID)
-	if err != nil {
-		return nil, errors.Wrap(err, "r.db.Exec")
-	}
-
-	if res.RowsAffected() == 0 {
-		msg, err := r.getMessageByID(ctx, messageID)
-		if err != nil {
-			if errors.Is(err, pgx.ErrNoRows) {
-				return nil, domain.ErrMessageNotFound
-			}
-
-			return nil, errors.Wrap(err, "getMessageByID")
-		}
-
-		return msg, nil
-	}
-	return r.getMessageByID(ctx, messageID)
-}
-
-func (r *Repo) getMessageByID(ctx context.Context, messageID int64) (*domain.Message, error) {
-	query := `SELECT * FROM messages WHERE id = $1`
-
-	row, err := r.db.Query(ctx, query, messageID)
+	row, err := r.db.Query(ctx, query, time.Now(), messageID)
 	if err != nil {
 		return nil, errors.Wrap(err, "r.db.Query")
 	}

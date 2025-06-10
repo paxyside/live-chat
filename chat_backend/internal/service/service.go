@@ -38,9 +38,9 @@ func (s *Service) GetChatByID(ctx context.Context, id int64) (*domain.Chat, erro
 }
 
 func (s *Service) CreateMessage(
-	ctx context.Context, chatID int64, senderTgID int64, content string, isFromOperator bool,
+	ctx context.Context, chatID int64, senderTgID int64, content string, isFromOperator bool, fileURL string,
 ) (*domain.Message, error) {
-	return s.repo.CreateMessage(ctx, chatID, senderTgID, content, isFromOperator)
+	return s.repo.CreateMessage(ctx, chatID, senderTgID, content, isFromOperator, fileURL)
 }
 
 func (s *Service) GetMessagesByChatID(ctx context.Context, chatID int64) ([]domain.Message, error) {
