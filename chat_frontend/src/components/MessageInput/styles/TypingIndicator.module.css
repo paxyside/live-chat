@@ -12,7 +12,7 @@
     border-radius: 12px;
     padding: 6px 18px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     box-shadow: 0 2px 8px var(--bg-tertiary);
     animation: fadeInTyping 0.4s cubic-bezier(.4, 0, .2, 1);
     transition: background 0.2s, color 0.2s;
@@ -31,7 +31,7 @@
 
 .dots {
     display: inline-block;
-    margin-left: 8px;
+    margin-left: 2px;
 }
 
 .dot {
