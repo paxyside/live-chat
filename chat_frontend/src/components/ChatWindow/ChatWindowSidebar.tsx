@@ -1,5 +1,5 @@
 import React from "react";
-import {PanelLeftClose} from "lucide-react";
+import {PanelRightClose} from "lucide-react";
 import {ChatList} from "@/components/ChatList";
 import styles from "./ChatWindow.module.css";
 import type {ChatWithLastMessage} from "@/types";
@@ -18,7 +18,7 @@ const ChatWindowSidebar: React.FC<ChatWindowSidebarProps> = ({chats, onOpenChat,
       onClick={onClose}
       aria-label="Close sidebar"
     >
-      <PanelLeftClose size={32}/>
+      <PanelRightClose size={32}/>
     </button>
     <ChatList chats={chats} onOpenChat={(id) => {
       onOpenChat(id);

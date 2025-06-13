@@ -1,5 +1,5 @@
 import React from "react";
-import {AlignJustify} from "lucide-react";
+import {PanelRightOpen} from "lucide-react";
 import styles from "./ChatWindow.module.css";
 
 interface ChatWindowHeaderProps {
@@ -13,7 +13,7 @@ const ChatWindowHeader: React.FC<ChatWindowHeaderProps> = ({onOpenSidebar}) => (
       onClick={onOpenSidebar}
       aria-label="Open chat list"
     >
-      <AlignJustify size={32}/>
+      <PanelRightOpen size={32}/>
     </button>
   </div>
 );
