@@ -1,6 +1,7 @@
 import React from "react";
 
 const API_URL: string = import.meta.env.VITE_APP_API_URL || "";
+const AUTH_TOKEN: string = import.meta.env.VITE_APP_API_AUTH_TOKEN || "";
 
 export const handleFileChange = async (
   eOrFile: React.ChangeEvent<HTMLInputElement> | File
@@ -21,6 +22,9 @@ export const handleFileChange = async (
   try {
     const response = await fetch(`${API_URL}/api/upload-file`, {
       method: "POST",
+      headers: {
+        "X-Authorization": `Bearer ${AUTH_TOKEN}`,
+      },
       body: formData,
     });
 
@@ -36,6 +40,7 @@ export const handleFileChange = async (
       filename: data.filename,
       mediaType: file.type,
     };
+
   } catch (error) {
     console.error("File upload error:", error);
     alert("File upload failed. Please try again.");
