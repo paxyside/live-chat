@@ -2,6 +2,8 @@ package ws_server
 
 import (
 	"chat_backend/internal/domain"
+	"chat_backend/internal/usecase"
+	"chat_backend/internal/utils"
 	"context"
 	"encoding/json"
 
@@ -62,6 +64,22 @@ func (c *WsController) sendMessage(ctx context.Context, cli *Client, raw json.Ra
 			Op:   OpAllChatsSuccess,
 			Data: rawChats,
 		})
+	}
+
+	if !isOperator {
+		allOperators, err := c.svc.GetAllOperators(ctx)
+		if err != nil {
+			return errors.Wrap(err, "c.svc.GetAllOperators")
+		}
+
+		for _, operator := range allOperators {
+			if utils.ShouldAlert(operator.ID, tgID) {
+				err = usecase.AlertSupport(operator, request.Content, tgID)
+				if err != nil {
+					return errors.Wrap(err, "usecase.AlertSupport")
+				}
+			}
+		}
 	}
 
 	return nil

@@ -89,6 +89,22 @@ func (r *Repo) SetOperator(ctx context.Context, tgID int64) error {
 	return nil
 }
 
+func (r *Repo) GetAllOperators(ctx context.Context) ([]domain.User, error) {
+	query := `SELECT * FROM users WHERE is_operator = $1`
+
+	rows, err := r.db.Query(ctx, query, true)
+	if err != nil {
+		return nil, errors.Wrap(err, "r.db.Query")
+	}
+
+	users, err := pgx.CollectRows[domain.User](rows, pgx.RowToStructByName[domain.User])
+	if err != nil {
+		return nil, errors.Wrap(err, "pgx.CollectRows")
+	}
+
+	return users, nil
+}
+
 // --- CHATS ---
 
 func (r *Repo) CreateChat(ctx context.Context, tgID int64) (*domain.Chat, error) {

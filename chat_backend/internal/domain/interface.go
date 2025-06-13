@@ -5,6 +5,7 @@ import "context"
 type Repository interface {
 	GetOrCreateUser(ctx context.Context, tgID int64, tgUsername *string) (*User, error)
 	SetOperator(ctx context.Context, tgID int64) error
+	GetAllOperators(ctx context.Context) ([]User, error)
 	CreateChat(ctx context.Context, tgID int64) (*Chat, error)
 	ListAllChats(ctx context.Context) ([]ChatWithLastMessage, error)
 	GetChatByTgID(ctx context.Context, tgID int64) (*Chat, error)
@@ -26,6 +27,7 @@ type Repository interface {
 type Service interface {
 	GetOrCreateUser(ctx context.Context, tgID int64, tgUsername *string) (*User, error)
 	SetOperator(ctx context.Context, tgID int64) error
+	GetAllOperators(ctx context.Context) ([]User, error)
 	CreateChat(ctx context.Context, tgID int64) (*Chat, error)
 	ListAllChats(ctx context.Context) ([]ChatWithLastMessage, error)
 	GetChatByTgID(ctx context.Context, tgID int64) (*Chat, error)

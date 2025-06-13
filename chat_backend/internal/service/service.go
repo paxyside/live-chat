@@ -21,6 +21,10 @@ func (s *Service) SetOperator(ctx context.Context, tgID int64) error {
 	return s.repo.SetOperator(ctx, tgID)
 }
 
+func (s *Service) GetAllOperators(ctx context.Context) ([]domain.User, error) {
+	return s.repo.GetAllOperators(ctx)
+}
+
 func (s *Service) CreateChat(ctx context.Context, tgID int64) (*domain.Chat, error) {
 	return s.repo.CreateChat(ctx, tgID)
 }
