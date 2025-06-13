@@ -48,6 +48,7 @@ func NewApp(l logger.Loggerer) (*App, error) {
 
 	httpController := http_server.NewHttpController(svc)
 	httpRouter := gin.New()
+
 	httpRouter.Use(cors.New(cors.Config{
 		AllowOrigins:     viper.GetStringSlice("app.server.http.allowed_origins"),
 		AllowMethods:     []string{"POST", "GET", "OPTIONS"},
@@ -55,7 +56,9 @@ func NewApp(l logger.Loggerer) (*App, error) {
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
+
 	httpRouter.Use(gin.Recovery())
+	httpRouter.Use(delivery.AuthMiddleware())
 	httpRouter.Use(delivery.LoggerMiddleware(l))
 
 	httpRouter.PATCH("/api/set-operator", httpController.SetOperator)

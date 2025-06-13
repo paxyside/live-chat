@@ -16,6 +16,7 @@ func LoadConfig() error {
 	viper.AutomaticEnv()
 	viper.SetEnvPrefix("")
 
+	_ = viper.BindEnv("app.server.http.auth_token", "AUTH_SECRET_KEY")
 	_ = viper.BindEnv("app.db.uri", "DB_URI")
 	_ = viper.BindEnv("app.telegram.bot_token", "TELEGRAM_BOT_TOKEN")
 
