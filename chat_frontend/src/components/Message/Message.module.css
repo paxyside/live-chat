@@ -101,11 +101,11 @@
 
 .editInput {
     width: 100%;
-    background: var(--bg-tertiary);
+    background: var(--text-main);
     border-radius: var(--border-radius);
     padding: 8px 12px;
     font-size: 15px;
-    color: var(--text-main);
+    color: var(--bg-tertiary);
     border: none;
     outline: none;
     box-shadow: var(--shadow);
