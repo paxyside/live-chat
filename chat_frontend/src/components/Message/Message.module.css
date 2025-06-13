@@ -141,6 +141,17 @@
     color: var(--text-main);
 }
 
+.editSaveBtn svg, .editCancelBtn svg {
+    width: 14px !important;
+    height: 14px !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: 14px !important;
+    max-height: 14px !important;
+    flex-shrink: 0;
+    display: inline-block;
+}
+
 @media (max-width: 600px) {
     .attachedFile {
         gap: 8px;
@@ -191,11 +202,11 @@
 /* MessageDropdownMenu */
 .dropdown {
     position: absolute;
-    top: 100%;
-    left: 0;
+    top: 120%;
+    right: 0;
     width: max-content;
-    background: var(--bg-main);
-    border-radius: 12px;
+    background: var(--bg-tertiary);
+    border-radius: var(--border-radius-dropdown);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
     padding: 8px 0;
     z-index: 100;
@@ -215,23 +226,47 @@
     }
 }
 
+.menuDivider {
+    height: 1px;
+    background: rgba(120, 130, 140, 0.13);
+    margin: 4px 0;
+    border: none;
+}
+
 .menuItem {
     width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     white-space: nowrap;
     background: none;
     border: none;
-    color: var(--muted-text);
+    outline: none;
     padding: 10px 16px;
-    text-align: left;
-    font-size: 1rem;
     cursor: pointer;
     transition: background 0.13s, color 0.13s;
-    border-radius: 8px;
+    font-size: 12px;
+    border-radius: 0;
 }
 
-.menuItem:hover {
-    background: var(--muted-dark);
-    color: var(--text-main);
+.menuItem:hover, .menuItem:focus {
+    background: rgba(120, 130, 140, 0.09);
+    color: var(--text-main, #fff);
+}
+
+.menuItem:last-child {
+    margin-bottom: 0;
+}
+
+.menuItem svg {
+    width: 12px !important;
+    height: 12px !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: 12px !important;
+    max-height: 12px !important;
+    flex-shrink: 0;
+    display: inline-block;
 }
 
 /* MessageAttachment */

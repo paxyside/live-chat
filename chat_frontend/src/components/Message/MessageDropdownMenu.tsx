@@ -1,7 +1,8 @@
 import React, {useRef} from "react";
 import {usePopupClose} from "@/components/Message/hooks/usePopupClose.ts";
 import styles from "./Message.module.css";
-import {Pencil, Trash2} from "lucide-react";
+import {IconTrash} from "@tabler/icons-react";
+import {Pencil} from "lucide-react";
 
 interface Props {
   onConfirmEdit: () => void;
@@ -24,21 +25,24 @@ const MessageDropDownMenu: React.FC<Props> = ({
         <button
           className={styles.menuItem}
           onClick={() => {
+            onConfirmEdit();
             onCancel();
-            setTimeout(() => onConfirmEdit(), 0);
           }}
         >
-          <Pencil size={8}/> Edit
+          <Pencil size={12} width={12} height={12}/>
+          Edit
         </button>
       )}
+      <div className={styles.menuDivider}/>
       <button
         className={styles.menuItem}
         onClick={() => {
+          onConfirmDelete();
           onCancel();
-          setTimeout(() => onConfirmDelete(), 0);
         }}
       >
-        <Trash2 size={8}/> Delete
+        <IconTrash size={12} width={12} height={12}/>
+        Delete
       </button>
     </div>
   );

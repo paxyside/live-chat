@@ -8,7 +8,7 @@
     --error-bg: #2d1a1a;
     --error-text: #ff6b6b;
     --border-radius: 16px;
-    --border-radius-bottom: 0 0 16px 16px;
+    --border-radius-dropdown: 4px;
     --muted-text: #b0b8c1;
     --muted-dark: #7a8599;
     --shadow: 0 2px 16px rgba(0, 0, 0, 0.10);

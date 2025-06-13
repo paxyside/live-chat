@@ -35,6 +35,7 @@ const MessageContent: React.FC<MessageContentProps> = memo(
     const handleEditCancel = () => {
       setIsEditing(false);
       setEditText(message.content);
+      onCancel();
     };
 
     return (

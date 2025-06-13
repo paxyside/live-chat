@@ -1,11 +1,11 @@
 import React, {useRef, useState} from "react";
 import SendButton from "@/components/MessageInput/SendButton";
 import TypingIndicator from "@/components/MessageInput/TypingIndicator";
-import MessageInputPreview from "@/components/MessageInput/MessageInputPreview";
-import MessageInputField from "@/components/MessageInput/MessageInputField";
-import {Paperclip} from "lucide-react";
-import styles from "./styles/MessageInput.module.css";
+import FileInputPreview from "@/components/MessageInput/FileInputPreview";
+import InputField from "@/components/MessageInput/InputField.tsx";
 import type {UploadedFile} from "@/types";
+import styles from "./MessageInput.module.css";
+import FileAttachButton from "@/components/MessageInput/FileAttachButton.tsx";
 
 interface Props {
   input: string;
@@ -82,28 +82,18 @@ const MessageInput = ({
     <div className={styles.inputWrapper}>
       <TypingIndicator show={showTyping} isOperator={isOperator}/>
       <div className={styles.messageInput}>
-        <MessageInputPreview
+        <FileInputPreview
           file={pendingFile}
           onRemove={handleRemoveFile}
           loading={fileLoading}
         />
-        <button
-          type="button"
-          className={styles.fileButton}
-          onClick={() => fileInputRef.current?.click()}
+
+        <FileAttachButton
+          onSelect={handleInputFileChange}
           disabled={fileLoading}
-          title="Прикрепить файл"
-        >
-          <Paperclip size={20}/>
-        </button>
-        <input
-          type="file"
-          ref={fileInputRef}
-          accept="image/*,video/*,audio/*"
-          style={{display: "none"}}
-          onChange={handleInputFileChange}
         />
-        <MessageInputField
+
+        <InputField
           value={input}
           onChange={setInput}
           onKeyDown={handleKeyDown}
@@ -111,6 +101,7 @@ const MessageInput = ({
           disabled={fileLoading}
           inputRef={textAreaRef}
         />
+
         <SendButton
           disabled={fileLoading || (!input.trim() && !pendingFile)}
           onClick={handleSend}

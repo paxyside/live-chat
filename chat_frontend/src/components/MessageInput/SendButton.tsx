@@ -1,6 +1,6 @@
 import React from "react";
 import {SendHorizonal} from "lucide-react";
-import styles from "./styles/SendButton.module.css";
+import styles from "./MessageInput.module.css";
 import clsx from "clsx";
 
 interface SendButtonProps {
@@ -16,7 +16,7 @@ const SendButton: React.FC<SendButtonProps> = ({onClick, disabled}) => (
     aria-label="Send message"
     type="button"
   >
-    <SendHorizonal size={32}/>
+    <SendHorizonal size={22} width={22} height={22}/>
   </button>
 );
 

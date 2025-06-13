@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./styles/MessageInput.module.css";
+import styles from "./MessageInput.module.css";
 
 interface Props {
   value: string,
@@ -10,7 +10,7 @@ interface Props {
   onPaste?: (e: React.ClipboardEvent<HTMLTextAreaElement>) => Promise<void>
 }
 
-const MessageInputField: React.FC<Props> = ({value, onChange, onKeyDown, disabled, inputRef, onPaste}) => (
+const InputField: React.FC<Props> = ({value, onChange, onKeyDown, disabled, inputRef, onPaste}) => (
   <textarea
     ref={inputRef}
     className={styles.inputField}
@@ -26,4 +26,4 @@ const MessageInputField: React.FC<Props> = ({value, onChange, onKeyDown, disable
   />
 );
 
-export default MessageInputField;
+export default InputField;
