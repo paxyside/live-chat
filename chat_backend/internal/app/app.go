@@ -57,13 +57,14 @@ func NewApp(l logger.Loggerer) (*App, error) {
 		AllowCredentials: true,
 	}))
 
+	httpRouter.Static("/uploads", "./uploads")
+
 	httpRouter.Use(gin.Recovery())
 	httpRouter.Use(delivery.AuthMiddleware())
 	httpRouter.Use(delivery.LoggerMiddleware(l))
 
 	httpRouter.PATCH("/api/set-operator", httpController.SetOperator)
 	httpRouter.POST("/api/upload-file", httpController.UploadFile)
-	httpRouter.Static("/uploads", "./uploads")
 
 	httpAddr := fmt.Sprintf("%s:%s", viper.GetString("app.server.http.host"), viper.GetString("app.server.http.port"))
 	httpServer := &http.Server{
