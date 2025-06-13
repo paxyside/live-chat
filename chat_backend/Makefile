@@ -23,7 +23,9 @@ tests:
 	go test -v ./...
 
 local_run:
+	cd ..
 	$(dc) up database -d
+	cd chat_backend
 	$(app_name)
 
 clear:
@@ -32,5 +34,3 @@ clear:
 new_migration:
 	docker run --rm -v $(PWD)/migrations:/migrations migrate/migrate create -ext sql -dir /migrations -seq ${filename}
 
-docker_run:
-	$(dc) up --build -d
