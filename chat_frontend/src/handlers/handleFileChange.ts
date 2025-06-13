@@ -8,13 +8,20 @@ export const handleFileChange = async (
 ): Promise<{ file_url: string; filename: string; mediaType: string } | null> => {
   let file: File | null = null;
 
+  console.log('[handleFileChange] Input:', eOrFile);
+
   if (eOrFile instanceof File) {
     file = eOrFile;
   } else {
     file = eOrFile.target.files?.[0] || null;
   }
 
-  if (!file) return null;
+  console.log('[handleFileChange] Selected file:', file);
+
+  if (!file) {
+    console.warn('[handleFileChange] No file selected');
+    return null;
+  }
 
   const formData = new FormData();
   formData.append("file", file);
@@ -28,21 +35,24 @@ export const handleFileChange = async (
       body: formData,
     });
 
+    console.log('[handleFileChange] Response status:', response.status);
+
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('[handleFileChange] Upload failed:', errorText);
       throw new Error(`Upload failed: ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('[handleFileChange] Success data:', data);
 
     return {
       file_url: data.url,
       filename: data.filename,
       mediaType: file.type,
     };
-
   } catch (error) {
-    console.error("File upload error:", error);
+    console.error('[handleFileChange] Error:', error);
     alert("File upload failed. Please try again.");
     return null;
   }
