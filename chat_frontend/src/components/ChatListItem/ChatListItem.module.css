@@ -4,7 +4,6 @@
     border-bottom: 1px solid var(--muted-dark);
     background: var(--bg-tertiary);
     transition: background var(--transition), box-shadow var(--transition);
-    border-radius: 12px;
     margin-bottom: 8px;
     outline: none;
     display: flex;
