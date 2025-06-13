@@ -1,8 +1,7 @@
 import React, {useRef} from "react";
 import {usePopupClose} from "@/components/Message/hooks/usePopupClose.ts";
 import styles from "./Message.module.css";
-import {IconTrash} from "@tabler/icons-react";
-import {Pencil} from "lucide-react";
+import {Pencil, Trash2} from "lucide-react";
 
 interface Props {
   onConfirmEdit: () => void;
@@ -41,7 +40,7 @@ const MessageDropDownMenu: React.FC<Props> = ({
           onCancel();
         }}
       >
-        <IconTrash size={12} width={12} height={12}/>
+        <Trash2 size={12} width={12} height={12}/>
         Delete
       </button>
     </div>
