@@ -80,7 +80,7 @@ const MessageInput = ({
 
   return (
     <div className={styles.inputWrapper}>
-      <TypingIndicator show={showTyping} isOperator={isOperator}/>
+      <TypingIndicator show={showTyping} isOperator={!isOperator}/>
       <div className={styles.messageInput}>
         <FileInputPreview
           file={pendingFile}
