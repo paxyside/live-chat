@@ -35,9 +35,14 @@ const MessageInput = ({
 
   const handleSend = () => {
     if (!input.trim() && !pendingFile) return;
+
     onSend(input.trim(), pendingFile?.file_url);
+
     setInput("");
+
     setPendingFile(null);
+
+    textAreaRef.current?.blur();
   };
 
   const handleInputFileChange = async (
